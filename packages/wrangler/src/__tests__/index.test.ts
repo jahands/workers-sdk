@@ -5,6 +5,10 @@ import { runWrangler } from "./run-wrangler";
 import { runInTempDir } from "./run-in-tmp";
 import { mockConsoleMethods } from "./mock-console";
 import * as fs from "node:fs";
+import os from "node:os";
+import path from "path/posix";
+import * as Sentry from "@sentry/node";
+import { sentryCapture } from "..";
 
 describe("wrangler", () => {
   runInTempDir();
@@ -420,5 +424,59 @@ If you wish to use webpack then you will need to create a custom build.`
         );
       }
     });
+  });
+});
+
+describe("Sentry", () => {
+  runInTempDir({ homedir: "./home" });
+
+  beforeEach(() => {
+    jest.mock("@sentry/node");
+    jest.spyOn(Sentry, "captureException");
+  });
+  afterAll(() => {
+    jest.unmock("@sentry/node");
+  });
+  test("should confirm user will allow Sentry usage", async () => {
+    mockConfirm({
+      text: "Wrangler uses Sentry for error reporting. Would you like to enable?",
+      result: true,
+    });
+    await runWrangler();
+
+    const { error_tracking_opt } = TOML.parse(
+      await fsp.readFile(
+        path.join(os.homedir(), ".wrangler/config/default.toml"),
+        "utf-8"
+      )
+    );
+
+    expect(error_tracking_opt).toBe(true);
+
+    sentryCapture(new Error("test error"), "testFalse");
+    expect(Sentry.captureException).toHaveBeenCalledWith(
+      new Error("test error")
+    );
+  });
+  test("should confirm user will disallow Sentry usage", async () => {
+    mockConfirm({
+      text: "Wrangler uses Sentry for error reporting. Would you like to enable?",
+      result: false,
+    });
+    await runWrangler();
+    const { error_tracking_opt } = TOML.parse(
+      await fsp.readFile(
+        path.join(os.homedir(), ".wrangler/config/default.toml"),
+        "utf-8"
+      )
+    );
+
+    expect(error_tracking_opt).toBe(false);
+
+    sentryCapture(new Error("test error"), "testFalse");
+    expect(Sentry.captureException).not.toHaveBeenCalledWith(
+      new Error("test error"),
+      "testFalse"
+    );
   });
 });

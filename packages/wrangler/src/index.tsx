@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "ink";
 import Dev from "./dev";
-import { readFile } from "node:fs/promises";
+import { appendFile, readFile } from "node:fs/promises";
 import makeCLI from "yargs";
 import type Yargs from "yargs";
 import { findUp } from "find-up";
@@ -46,9 +46,16 @@ import { setTimeout } from "node:timers/promises";
 import * as fs from "node:fs";
 import { execa } from "execa";
 import { whoami } from "./whoami";
+import { homedir } from "node:os";
+import {
+  captureException,
+  getCurrentHub,
+  startTransaction,
+} from "@sentry/node";
 
 const resetColor = "\x1b[0m";
 const fgGreenColor = "\x1b[32m";
+import os from "node:os";
 
 async function readConfig(configPath?: string): Promise<Config> {
   const config: Config = {};
@@ -2048,9 +2055,33 @@ export async function main(argv: string[]): Promise<void> {
   wrangler.version(wranglerVersion).alias("v", "version");
   wrangler.exitProcess(false);
 
-  await initialiseUserConfig();
+  async function appendSentryDecision(userInput) {
+    const homePath = path.join(homedir(), ".wrangler/config/");
+    fs.mkdirSync(homePath, { recursive: true });
+    await appendFile(
+      path.join(homePath, "default.toml"),
+      `error_tracking_opt = ${userInput} # Sentry \n`,
+      { encoding: "utf-8" }
+    );
+  }
 
+  const errorTrackingOpt = await sentryPermissions();
+
+  if (errorTrackingOpt === undefined) {
+    const userInput = await confirm(
+      // TODO - Discuss the messaging
+      "Wrangler uses Sentry for error reporting. Would you like to enable?"
+    );
+    userInput
+      ? void appendSentryDecision("true")
+      : void appendSentryDecision("false");
+  }
+  if (!errorTrackingOpt) {
+    const sentryClient = getCurrentHub().getClient();
+    if (sentryClient !== undefined) sentryClient.getOptions().enabled = false;
+  }
   try {
+    await initialiseUserConfig();
     await wrangler.parse();
   } catch (e) {
     if (e instanceof CommandLineArgsError) {
@@ -2065,6 +2096,32 @@ export async function main(argv: string[]): Promise<void> {
         "If you think this is a bug then please create an issue at https://github.com/cloudflare/wrangler2/issues/new."
       );
     }
+    sentryCapture(e, "indexCatch");
     throw e;
   }
+}
+
+export function sentryCapture(err: Error, origin = "") {
+  const transaction = startTransaction({
+    op: origin,
+    name: err.name,
+  });
+  captureException(err);
+  transaction.finish();
+}
+
+export async function sentryPermissions() {
+  if (!fs.existsSync(path.join(homedir(), ".wrangler/config/default.toml")))
+    return undefined;
+
+  const defaultTOML = TOML.parse(
+    await readFile(path.join(homedir(), ".wrangler/config/default.toml"), {
+      encoding: "utf-8",
+    })
+  );
+  const { error_tracking_opt } = defaultTOML as {
+    error_tracking_opt: boolean | undefined;
+  };
+
+  return error_tracking_opt;
 }
