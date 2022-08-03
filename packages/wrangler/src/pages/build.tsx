@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { logger } from "../logger";
@@ -9,6 +9,7 @@ import { buildPlugin } from "./functions/buildPlugin";
 import { buildWorker } from "./functions/buildWorker";
 import { generateConfigFromFileTree } from "./functions/filepath-routing";
 import { writeRoutesModule } from "./functions/routes";
+import { convertRoutePathsToGlobPatterns } from "./functions/routes-transformation";
 import { pagesBetaWarning, RUNNING_BUILDERS } from "./utils";
 import type { Config } from "./functions/routes";
 import type { ArgumentsCamelCase, Argv } from "yargs";
@@ -160,6 +161,26 @@ export async function buildFunctions({
 		baseDir: functionsDirectory,
 		baseURL,
 	});
+
+	if (config.routes) {
+		if (!buildOutputDirectory) {
+			logger.warn(
+				"Cannot write generated routes file _routes.generated.json. Output directory is undefined."
+			);
+		} else if (existsSync(join(buildOutputDirectory, "_routes.json"))) {
+			logger.log(
+				"Found _routes.json file. Skipping automatic routes generation."
+			);
+		} else {
+			const routesGlobPatterns: string[] = convertRoutePathsToGlobPatterns(
+				config.routes.map((route) => route.routePath)
+			);
+			writeFileSync(
+				join(buildOutputDirectory, "_routes.generated.json"),
+				JSON.stringify(routesGlobPatterns, null, 2)
+			);
+		}
+	}
 
 	if (outputConfigPath) {
 		writeFileSync(
