@@ -34,7 +34,7 @@ Currently, developers must context-switch between their development environment 
 Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 1. Has deep knowledge of Cloudflare Workers APIs and patterns
-2. Understands the current project context (wrangler.toml, code structure)
+2. Understands the current project context (wrangler.jsonc, code structure)
 3. Can execute Workers-specific commands and operations
 4. Provides contextual help and code generation
 
@@ -94,7 +94,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- OpenCode recognizes wrangler.toml configuration
+- OpenCode recognizes wrangler.jsonc configuration
 - OpenCode understands Workers runtime APIs (Request/Response, KV, D1, Queues, etc.)
 - OpenCode can suggest appropriate Workers patterns and best practices
 
@@ -119,7 +119,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Priority:** P0 (Must Have)
 **Acceptance Criteria:**
 
-- Assistant automatically detects wrangler.toml/wrangler.json configuration
+- Assistant automatically detects wrangler.jsonc/wrangler.json configuration
 - Assistant understands configured bindings (KV, D1, Queues, R2, etc.)
 - Assistant knows Workers runtime version and compatibility date
 - Assistant can reference project file structure and code
@@ -143,7 +143,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 - Assistant can generate new Workers code based on requirements
 - Assistant can modify existing Workers code files
-- Assistant can update wrangler.toml configuration
+- Assistant can update wrangler.jsonc configuration
 - Assistant can create appropriate binding configurations
 
 #### R5: Interactive Development Session
@@ -309,7 +309,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Key Deliverables:**
 
 - `wrangler -p` and `wrangler -p "prompt"` commands functional
-- Workers project context detection (wrangler.toml, basic bindings)
+- Workers project context detection (wrangler.jsonc, basic bindings)
 - Core Workers knowledge base integrated
 - Performance requirements met (R1, R2, R3, UX1, UX2)
 
