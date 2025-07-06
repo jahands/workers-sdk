@@ -129,7 +129,7 @@ function main() {
 
 	// 5. Publish Wrangler
 	console.log(`📦 Publishing @jahands/wrangler@${wranglerVersion}...`);
-	execCommand("pnpm publish", { cwd: "packages/wrangler" });
+	execCommand("pnpm publish --tag ai", { cwd: "packages/wrangler" });
 
 	// 6. Commit changes
 	console.log(`📝 Committing version changes...`);
@@ -144,9 +144,9 @@ function main() {
 
 	console.log(`\n🎉 Successfully published packages:`);
 	console.log(`   📦 @jahands/opencode-cf@${opencodeVersion}`);
-	console.log(`   📦 @jahands/wrangler@${wranglerVersion}`);
+	console.log(`   📦 @jahands/wrangler@${wranglerVersion} (tagged as @ai)`);
 	console.log(`\n💡 Users can now install with:`);
-	console.log(`   npm install -g @jahands/wrangler@${wranglerVersion}`);
+	console.log(`   npm install -g @jahands/wrangler@ai`);
 	console.log(`   wrangler -p "Hello OpenCode!"`);
 }
 

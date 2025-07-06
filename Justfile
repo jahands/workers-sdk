@@ -150,7 +150,7 @@ publish-opencode:
 # Publish Wrangler package to npm
 publish-wrangler:
     @echo "📦 Publishing @jahands/wrangler to npm..."
-    cd packages/wrangler && pnpm publish
+    cd packages/wrangler && pnpm publish --tag ai
 
 # Publish both OpenCode and Wrangler packages
 publish-all: build-opencode build-wrangler
@@ -185,7 +185,7 @@ publish-dry-run:
     cd packages/opencode/opencode && pnpm publish --dry-run
     @echo ""
     @echo "Wrangler package:"
-    cd packages/wrangler && pnpm publish --dry-run
+    cd packages/wrangler && pnpm publish --dry-run --tag ai
 
 # Show help for common development workflows
 help:
