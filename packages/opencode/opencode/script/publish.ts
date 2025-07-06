@@ -76,6 +76,9 @@ for (const [os, arch] of targets) {
 				bin: {
 					opencode: "./bin/opencode",
 				},
+				publishConfig: {
+					access: "public",
+				},
 			},
 			null,
 			2
@@ -114,6 +117,9 @@ await Bun.file(`./dist/${mainPackageName}/package.json`).write(
 				type: "git",
 				url: "https://github.com/jahands/workers-sdk.git",
 				directory: "packages/opencode/opencode",
+			},
+			publishConfig: {
+				access: "public",
 			},
 		},
 		null,
