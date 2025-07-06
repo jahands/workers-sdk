@@ -96,17 +96,17 @@
 		"mcpServers": [
 			{
 				"name": "llm-rules",
-				"command": "${workspaceFolder}/.vscode/bin/bun",
+				"command": "bun",
 				"args": ["x", "llm-rules@latest", "--dir", "${workspaceFolder}"]
 			},
 			{
 				"name": "context7",
-				"command": "${workspaceFolder}/.vscode/bin/bun",
+				"command": "bun",
 				"args": ["x", "@upstash/context7-mcp@latest"]
 			},
 			{
 				"name": "cloudflare-docs",
-				"command": "${workspaceFolder}/.vscode/bin/bun",
+				"command": "bun",
 				"args": [
 					"x",
 					"mcp-remote@latest",
