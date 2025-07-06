@@ -227,6 +227,24 @@ Use standard npm publishing workflow:
 - Shell wrapper: `tmp/opencode/packages/opencode/bin/opencode`
 - Package structure: `tmp/opencode/packages/opencode/package.json` (optionalDependencies pattern)
 
+#### Step 3.6: Auto Updater Customization
+
+**Problem**: OpenCode includes an auto updater that automatically upgrades to the upstream `opencode-ai` package, which would replace our custom `@jahands/opencode-cf` package.
+
+**Requirements**:
+
+- Prevent auto updater from reverting to upstream `opencode-ai` package
+- Maintain auto update functionality for POC packages
+- Support standard package manager workflows (npm, pnpm, bun)
+
+**Solution**: Update OpenCode's installation module to use custom package names (`@jahands/opencode-cf`) instead of upstream names (`opencode-ai`) in upgrade logic and package detection.
+
+**Key Changes**:
+
+- Modify upgrade commands to install `@jahands/opencode-cf` packages
+- Update package detection to look for custom package names
+- Configure version checking for POC release cycle
+
 ### Phase 4: Workers Context Integration (Week 4-5)
 
 #### Step 4.1: Enhance Context Detection
