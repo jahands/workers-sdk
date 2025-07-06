@@ -339,7 +339,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - `wrangler -p` and `wrangler -p "prompt"` commands functional
 - Workers project context detection (wrangler.jsonc, basic bindings)
 - Core Workers knowledge base integrated
-- Performance requirements met (R1, R2, R3, UX1, UX2)
+- Performance requirements met (REQ1, REQ2, REQ3, UX1, UX2)
 
 **Success Criteria:**
 
@@ -353,9 +353,9 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Key Deliverables:**
 
-- Interactive conversation sessions (R5)
+- Interactive conversation sessions (REQ5)
 - Advanced Workers context understanding (all binding types)
-- Code generation and modification capabilities (R4)
+- Code generation and modification capabilities (REQ4)
 - Privacy and security controls (UX4)
 
 **Success Criteria:**
