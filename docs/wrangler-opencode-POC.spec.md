@@ -131,74 +131,101 @@ packages/
 - Context passing: Temporary files with JSON-serialized project data
 - Asset resolution: Use `require.resolve()` to locate OpenCode binaries in node_modules
 
-### Phase 3: Build System Integration (Week 3-4)
+### Phase 3: Multi-Platform Build System Integration (Week 3-5)
 
-#### Step 3.1: Setup OpenCode Publishing
+#### Step 3.1: Multi-Platform Build Architecture
 
-**Publishing Configuration**:
+**Build Complexity Overview**:
 
-- Create build process for `@jahands/opencode-cf` package
-- Include OpenCode packages in monorepo build dependency graph
-- Ensure proper build ordering (OpenCode before publishing)
-- Handle mixed language builds (TypeScript + Go)
+OpenCode requires a sophisticated multi-platform build system due to its dual TypeScript/Go architecture. We need to adapt the existing opencode build patterns from `tmp/opencode/packages/opencode/script/publish.ts` for the workers-sdk monorepo.
 
-**Key Changes**:
+**Key Components to Adapt**:
 
-- Add OpenCode packages to Turbo task dependencies
-- Create package-specific turbo.json files for custom build steps
-- Configure Go build tasks for TUI package (macOS only for POC)
-- Setup pkg.pr.new GitHub Actions workflow for publishing
+- **Platform Matrix**: Support 5 platforms (linux-arm64, linux-x64, darwin-arm64, darwin-x64, windows-x64)
+- **Dual Build Process**: Go TUI cross-compilation + TypeScript compilation with embedded binaries
+- **Distribution Strategy**: Platform-specific npm packages with optional dependencies pattern
+- **Binary Resolution**: Shell wrapper and postinstall scripts for platform detection
 
-#### Step 3.2: Wrangler Integration
+**Reference Implementation**:
 
-**Dependency Resolution**:
+- Build logic: `tmp/opencode/packages/opencode/script/publish.ts` (lines 22-63)
+- Platform detection: `tmp/opencode/packages/opencode/script/postinstall.mjs`
+- Shell wrapper: `tmp/opencode/packages/opencode/bin/opencode`
 
-- Wrangler imports OpenCode from `@jahands/opencode-cf` npm package
-- Use `require.resolve()` to locate OpenCode binaries in node_modules
-- Integration module spawns processes from published package
-- No direct workspace references in Wrangler code
+#### Step 3.2: Build Process Integration
+
+**Go TUI Build Setup**:
+
+Adapt the Go cross-compilation process from opencode's publish script:
+
+- Copy build logic from `tmp/opencode/packages/opencode/script/publish.ts` lines 42-47
+- Create build script in `packages/opencode/tui/scripts/` following the CGO_ENABLED=0 pattern
+- Support all 5 target platforms with proper GOOS/GOARCH mapping
+
+**TypeScript Build with Embedded Binaries**:
+
+Implement the Bun compilation pattern from opencode:
+
+- Follow `tmp/opencode/packages/opencode/script/publish.ts` lines 46-47 for bun build command
+- Embed TUI binary using the `--compile` flag with embedded files
+- Generate platform-specific packages following the naming pattern `@jahands/opencode-cf-{platform}-{arch}`
+
+#### Step 3.3: Distribution Package Structure
+
+**Wrapper Package Pattern**:
+
+Implement the opencode distribution strategy:
+
+- **Main Package**: `@jahands/opencode-cf` (wrapper with platform detection)
+- **Platform Packages**: `@jahands/opencode-cf-{platform}-{arch}` (contains binaries)
+- **Optional Dependencies**: Platform packages as optional dependencies in main package
+
+**Platform Detection Scripts**:
+
+Copy and adapt from opencode:
+
+- **Postinstall Script**: Adapt `tmp/opencode/packages/opencode/script/postinstall.mjs` for our package naming
+- **Shell Wrapper**: Adapt `tmp/opencode/packages/opencode/bin/opencode` for platform detection and binary resolution
+- **Binary Linking**: Symlink creation pattern for cross-platform compatibility
+
+#### Step 3.4: Monorepo Build Integration
+
+**Turbo Configuration**:
+
+Integrate OpenCode builds into the existing turbo pipeline:
+
+- Add Go build tasks with proper dependency ordering
+- Configure build caching for TypeScript components (cache Go builds as needed)
+- Ensure proper build sequence: TUI → OpenCode → Wrangler
+
+**Development vs Production Builds**:
+
+- **Development**: Single-platform builds for faster iteration
+- **Production**: Full multi-platform builds for publishing
+- **CI/CD**: Automated builds using the opencode publishing pattern
+
+#### Step 3.5: Publishing Strategy
+
+**pkg.pr.new Integration**:
+
+Adapt the opencode publishing workflow for pkg.pr.new:
+
+- Publish all 6 packages (1 main + 5 platform-specific) in coordinated releases
+- Update GitHub Actions to handle multi-platform builds
+- Add Go toolchain setup to CI pipeline
 
 **Development Workflow**:
 
-- **Local Development**: Use `workspace:*` dependency for immediate testing
-- **Integration Testing**: Use pnpm commands to temporarily test published version
-- **Production Releases**: Change to pinned npm version (e.g., `^0.1.0`)
-- **Daily Development**: Use pnpm commands to avoid manual package.json editing
+- **Local Development**: Use `workspace:*` dependency in Wrangler
+- **Testing**: Switch between workspace and published packages using pnpm commands
+- **Publishing**: Coordinated release of all platform packages
 
-**Dependency Configuration**:
+**Reference Files to Copy/Adapt**:
 
-For development, use `workspace:*` in package.json:
-
-```json
-{
-	"dependencies": {
-		"@jahands/opencode-cf": "workspace:*"
-	}
-}
-```
-
-For production releases, change to pinned version:
-
-```json
-{
-	"dependencies": {
-		"@jahands/opencode-cf": "^0.1.0"
-	}
-}
-```
-
-**Switching Between Versions**:
-
-```bash
-# Local development (default) - uses workspace packages
-pnpm install
-
-# Test published package - temporarily overrides workspace
-pnpm add @jahands/opencode-cf@latest --workspace=false
-
-# Back to workspace version - restores workspace links
-pnpm install
-```
+- Publishing logic: `tmp/opencode/packages/opencode/script/publish.ts`
+- Platform detection: `tmp/opencode/packages/opencode/script/postinstall.mjs`
+- Shell wrapper: `tmp/opencode/packages/opencode/bin/opencode`
+- Package structure: `tmp/opencode/packages/opencode/package.json` (optionalDependencies pattern)
 
 ### Phase 4: Workers Context Integration (Week 4-5)
 
