@@ -52,9 +52,6 @@ just watch
 # Test with a specific prompt
 just test "Help me with Cloudflare Workers"
 
-# Test interactive mode (no initial prompt)
-just test-interactive
-
 # Test in a Workers project context
 just test-context my-project "Help me understand this project"
 ```

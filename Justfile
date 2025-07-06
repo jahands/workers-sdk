@@ -50,12 +50,8 @@ dev-build:
     cd packages/opencode/opencode && bun run script/publish.ts --dev
 
 # Test the integration with a simple prompt
-test prompt="Hello OpenCode":
+test prompt="":
     cd packages/wrangler && node wrangler-dist/cli.js -p "{{prompt}}"
-
-# Test interactive mode (no prompt)
-test-interactive:
-    cd packages/wrangler && node wrangler-dist/cli.js -p
 
 # Switch to workspace packages for development
 use-workspace:
@@ -86,7 +82,7 @@ setup:
     @echo "✅ Setup complete! Test with: just test"
 
 # Quick rebuild and test cycle
-quick-test prompt="test":
+quick-test prompt="":
     @echo "🔄 Quick rebuild and test..."
     just dev-build
     just build-wrangler
@@ -200,7 +196,6 @@ help:
     @echo ""
     @echo "Testing different modes:"
     @echo "  just test 'prompt with message'"
-    @echo "  just test-interactive"
     @echo "  just test-context my-project 'help with this project'"
     @echo ""
     @echo "Package management:"
