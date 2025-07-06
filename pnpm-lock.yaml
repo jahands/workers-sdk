@@ -3566,6 +3566,9 @@ importers:
       miniflare:
         specifier: workspace:*
         version: link:../miniflare
+      opencode:
+        specifier: workspace:*
+        version: link:../opencode/opencode
       path-to-regexp:
         specifier: 6.3.0
         version: 6.3.0
