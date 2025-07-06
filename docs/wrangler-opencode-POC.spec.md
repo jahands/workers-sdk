@@ -237,7 +237,7 @@ packages/
 - [ ] OpenCode detects Wrangler configuration files (all variants)
 - [ ] OpenCode understands Workers project context (bindings, runtime version)
 - [ ] Performance impact < 500ms for non-AI commands
-- [ ] Bundle size increase < 10MB
+- [ ] OpenCode dependency installs successfully across platforms
 
 ### User Experience Requirements
 
@@ -250,9 +250,9 @@ packages/
 
 ### Technical Risks
 
-1. **Dependency Conflicts**: Use workspace references and external dependencies
-2. **Build Complexity**: Keep OpenCode packages external during POC
-3. **Performance Impact**: Lazy load OpenCode components
+1. **Dependency Conflicts**: Manage OpenCode dependencies separately from workers-sdk catalog
+2. **Publishing Complexity**: Coordinate OpenCode package publishing with Wrangler updates
+3. **Performance Impact**: Lazy load OpenCode components and optimize process spawning
 4. **Cross-Platform Compatibility**: Test on Windows, macOS, Linux
 
 ### User Experience Risks
