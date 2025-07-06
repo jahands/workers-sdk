@@ -34,7 +34,7 @@ Currently, developers must context-switch between their development environment 
 Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 1. Provides Workers-specific guidance through curated prompts and documentation lookup
-2. Understands the current project context (wrangler.jsonc, code structure)
+2. Understands the current project context (wrangler configuration, code structure)
 3. Can execute Workers-specific commands and operations
 4. Provides contextual help and code generation
 
@@ -83,7 +83,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Acceptance Criteria:**
 
 - `wrangler -p` or `wrangler --prompt` launches interactive OpenCode TUI
-- OpenCode understands Workers APIs, bindings, and configuration
+- OpenCode can search Workers APIs, bindings, and configuration information
 - OpenCode can read and modify project files with Workers context
 
 ### Story 3: Workers-Specific Knowledge
@@ -94,8 +94,8 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- OpenCode recognizes wrangler.jsonc configuration
-- OpenCode understands Workers runtime APIs (Request/Response, KV, D1, Queues, etc.)
+- OpenCode recognizes wrangler configuration
+- OpenCode can reference Workers runtime APIs (Request/Response, KV, D1, Queues, etc.)
 - OpenCode can suggest appropriate Workers patterns and best practices
 
 ## Product Requirements
@@ -152,7 +152,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 - Assistant can generate new Workers code based on requirements
 - Assistant can modify existing Workers code files
-- Assistant can update wrangler.jsonc configuration
+- Assistant can update wrangler configuration
 - Assistant can create appropriate binding configurations
 
 #### REQ5: Interactive Development Session
@@ -271,7 +271,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Mitigation Strategy:**
 
 - Extensive testing with Workers-specific scenarios
-- Curated training data and system prompts
+- Curated system prompts and documentation search
 - Feedback collection and continuous improvement process
 - Clear disclaimers about AI-generated content
 
@@ -338,8 +338,8 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Key Deliverables:**
 
 - `wrangler -p` and `wrangler -p "prompt"` commands functional
-- Workers project context detection (wrangler.jsonc, basic bindings)
-- Core Workers knowledge base integrated
+- Workers project context detection (wrangler configuration, basic bindings)
+- Workers documentation search integrated
 - Performance requirements met (REQ1, REQ2, REQ3, UX1, UX2)
 
 **Success Criteria:**
