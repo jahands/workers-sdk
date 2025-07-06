@@ -440,6 +440,13 @@ export function createCLIParser(argv: string[]) {
 			hidden: true,
 			alias: ["x-provision"],
 		})
+		.option("prompt", {
+			alias: "p",
+			describe:
+				"Launch OpenCode AI assistant (interactive mode) or run a single prompt",
+			type: "string",
+			requiresArg: false,
+		})
 		.epilogue(
 			`Please report any issues to ${chalk.hex("#3B818D")(
 				"https://github.com/cloudflare/workers-sdk/issues/new/choose"
@@ -453,7 +460,7 @@ export function createCLIParser(argv: string[]) {
 		"Examples:": `${chalk.bold("EXAMPLES")}`,
 	});
 	wrangler.group(
-		["config", "cwd", "env", "help", "version"],
+		["config", "cwd", "env", "help", "version", "prompt"],
 		`${chalk.bold("GLOBAL FLAGS")}`
 	);
 	wrangler.help("help", "Show help").alias("h", "help");
@@ -475,6 +482,12 @@ export function createCLIParser(argv: string[]) {
 			if (args._.length > 0) {
 				throw new CommandLineArgsError(`Unknown command: ${args._}.`);
 			} else {
+				// Check for prompt flag first
+				if (args.prompt !== undefined) {
+					const { launchOpenCode } = await import("./opencode-integration");
+					await launchOpenCode(args);
+					return;
+				}
 				// args.v will exist and be true in the case that no command is called, and the -v
 				// option is present. This is to allow for running asynchronous printWranglerBanner
 				// in the version command.
