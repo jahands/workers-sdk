@@ -8,13 +8,13 @@ This document provides detailed technical implementation guidance for integratin
 
 ### Integration Strategy
 
-**Package Copying Approach**: Copy all OpenCode packages from the opencode repository into the workers-sdk repository to simplify dependency management during POC development.
+**Integration Strategy**: Develop OpenCode packages within workers-sdk monorepo, then publish as `@jahands/wrangler-opencode` and use as dependency in Wrangler.
 
 **Directory Structure**:
 
 ```
 packages/
-├── opencode/           # New directory for all OpenCode packages
+├── opencode/           # Copied OpenCode packages for development
 │   ├── opencode/       # Core OpenCode package (TypeScript/Node.js)
 │   ├── tui/           # Terminal UI package (Go)
 │   ├── function/      # Function package (TypeScript)
@@ -23,9 +23,15 @@ packages/
 └── ...                # Other existing packages
 ```
 
+**Publishing Strategy**:
+
+- Develop OpenCode packages within workers-sdk monorepo
+- Publish combined package as `@jahands/wrangler-opencode` to npm
+- Wrangler uses published npm package as dependency
+
 ## Implementation Steps
 
-### Phase 1: Package Integration (Week 1-2)
+### Phase 1: Package Setup (Week 1-2)
 
 #### Step 1.1: Copy OpenCode Packages
 
@@ -63,21 +69,23 @@ packages/
      - "tools"
    ```
 
-2. **Preserve existing OpenCode dependency versions** to avoid conflicts:
+2. **Preserve existing OpenCode dependency versions**:
    - Keep OpenCode packages' existing package.json files unchanged
    - Avoid integrating with workers-sdk catalog system for POC
    - Let OpenCode packages maintain their own dependency versions
 
-#### Step 1.3: Resolve Package Dependencies
+#### Step 1.3: Setup Publishing and Dependency
 
-**Dependency Strategy for POC**:
+1. **Prepare OpenCode for publishing**:
 
-- **Preserve OpenCode versions**: Keep existing package.json files as-is
-- **Avoid catalog integration**: Skip workers-sdk catalog system to prevent version conflicts
-- **Isolate dependencies**: Let OpenCode packages use their proven dependency versions
-- **Handle Go modules**: Keep existing go.mod structure unchanged
+   - Configure build process to create `@jahands/wrangler-opencode` package
+   - Include all necessary binaries and assets in published package
+   - Ensure Go TUI binary is included in the npm distribution
 
-**Rationale**: Minimizes integration complexity and reduces risk of dependency conflicts during POC development
+2. **Add OpenCode as Wrangler dependency**:
+   - Add `@jahands/wrangler-opencode` to Wrangler's package.json
+   - Use published npm package (not workspace reference)
+   - Pin to specific version for POC stability
 
 ### Phase 2: Wrangler CLI Integration (Week 2-3)
 
@@ -114,41 +122,44 @@ packages/
 
 **Process Architecture**:
 
-- Single prompt mode: Spawn Node.js process for core OpenCode package
-- Interactive mode: Spawn Go binary for TUI package
+- Single prompt mode: Spawn Node.js process for OpenCode from npm package
+- Interactive mode: Spawn Go binary distributed with `@jahands/wrangler-opencode`
 - Context passing: Environment variables with JSON-serialized project data
+- Asset resolution: Use `require.resolve()` to locate OpenCode binaries in node_modules
 
 ### Phase 3: Build System Integration (Week 3-4)
 
-#### Step 3.1: Update Build Configuration
+#### Step 3.1: Setup OpenCode Publishing
 
-**Dependency Management Strategy**:
+**Publishing Configuration**:
 
-- Keep OpenCode packages as external dependencies for POC simplicity
-- Preserve OpenCode's existing dependency versions (no catalog integration)
-- Avoid bundling OpenCode to minimize build complexity
-- Let each OpenCode package manage its own node_modules
-
-**Key Changes**:
-
-- Update `EXTERNAL_DEPENDENCIES` to exclude OpenCode from bundling
-- Add workspace dependency reference: `"opencode": "workspace:*"`
-- Ensure build process can locate OpenCode binaries at runtime
-- No changes to OpenCode package.json files (preserve existing versions)
-
-#### Step 3.2: Update Turbo Configuration
-
-**Build Pipeline Integration**:
-
+- Create build process for `@jahands/wrangler-opencode` package
 - Include OpenCode packages in monorepo build dependency graph
-- Ensure proper build ordering (OpenCode before Wrangler)
+- Ensure proper build ordering (OpenCode before publishing)
 - Handle mixed language builds (TypeScript + Go)
 
-**Configuration Updates**:
+**Key Changes**:
 
 - Add OpenCode packages to Turbo task dependencies
 - Create package-specific turbo.json files for custom build steps
 - Configure Go build tasks for TUI package
+- Setup publishing workflow for `@jahands/wrangler-opencode`
+
+#### Step 3.2: Wrangler Integration
+
+**Dependency Resolution**:
+
+- Wrangler imports OpenCode from `@jahands/wrangler-opencode` npm package
+- Use `require.resolve()` to locate OpenCode binaries in node_modules
+- Integration module spawns processes from published package
+- No direct workspace references in Wrangler code
+
+**Development Workflow**:
+
+- Develop OpenCode packages within workers-sdk monorepo
+- Publish changes to `@jahands/wrangler-opencode`
+- Update Wrangler's dependency version to test changes
+- Standard npm dependency management for production
 
 ### Phase 4: Workers Context Integration (Week 4-5)
 
