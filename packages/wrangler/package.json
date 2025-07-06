@@ -1,5 +1,5 @@
 {
-	"name": "wrangler",
+	"name": "@jahands/wrangler",
 	"version": "4.23.0",
 	"description": "Command-line interface for all things Cloudflare Workers",
 	"keywords": [
