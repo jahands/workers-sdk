@@ -131,6 +131,62 @@ packages/
 - Context passing: Temporary files with JSON-serialized project data
 - Asset resolution: Use `require.resolve()` to locate OpenCode binaries in node_modules
 
+#### Step 2.3: Add Direct OpenCode Subcommand Proxy
+
+**Problem**: The current `-p` flag integration only supports launching OpenCode interactively with an optional prompt. However, OpenCode has additional subcommands (like `opencode auth`, `opencode models`, etc.) that cannot be accessed through the `-p` flag interface.
+
+**Solution**: Add a new `wrangler code` subcommand that acts as a direct proxy to `@jahands/opencode-cf`, allowing users to access all OpenCode functionality through Wrangler.
+
+**Implementation Requirements**:
+
+**CLI Interface**:
+
+- Add `code` as a new top-level subcommand in Wrangler
+- Forward all arguments and flags directly to the underlying OpenCode binary
+- Maintain identical behavior to running `opencode` directly
+- Support all OpenCode subcommands: `auth`, `models`, etc.
+
+**Command Examples**:
+
+```bash
+# Access OpenCode subcommands through Wrangler
+wrangler code auth
+wrangler code models
+
+# Interactive mode (equivalent to wrangler -p)
+wrangler code
+```
+
+**Technical Implementation**:
+
+**Command Registration**:
+
+- Add `code` subcommand to Wrangler's yargs configuration
+- Configure as a passthrough command that accepts arbitrary arguments
+- Ensure proper help text and documentation integration
+
+**Process Delegation**:
+
+- Use the same OpenCode binary resolution logic as the `-p` flag integration
+- Spawn OpenCode process with all provided arguments passed through unchanged
+- Handle process exit codes and error propagation appropriately
+- Maintain stdio forwarding for interactive commands
+- **Help Flag Passthrough**: Ensure `-h` and `--help` flags are passed to OpenCode rather than triggering Wrangler's built-in help system
+
+**Integration Points**:
+
+- Leverage existing OpenCode integration module from Phase 2
+- Reuse binary path resolution and error handling logic
+- Ensure consistent behavior between `-p` flag and `code` subcommand
+- Apply same Workers project context passing for relevant commands
+
+**Benefits**:
+
+- **Complete Feature Access**: Users can access all OpenCode functionality through Wrangler
+- **Consistent Interface**: Single entry point for all AI-powered development tools
+- **Familiar Patterns**: Follows established CLI proxy patterns (like `git` subcommands)
+- **Future-Proof**: Automatically supports new OpenCode features without Wrangler updates
+
 ### Phase 3: Multi-Platform Build System Integration (Week 3-5)
 
 #### Step 3.1: Multi-Platform Build Architecture
