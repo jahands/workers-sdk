@@ -443,7 +443,7 @@ export function createCLIParser(argv: string[]) {
 		.option("prompt", {
 			alias: "p",
 			describe:
-				"Launch OpenCode AI assistant (interactive mode) or run a single prompt",
+				"Launch OpenCode AI assistant interactively (optionally with initial prompt)",
 			type: "string",
 			requiresArg: false,
 		})

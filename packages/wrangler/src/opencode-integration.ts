@@ -44,28 +44,21 @@ interface ProjectContext {
 
 /**
  * Main entry point for OpenCode integration
- * Handles both interactive mode and single prompt mode
+ * Always launches interactive mode, with optional initial prompt
  */
 export async function launchOpenCode(args: OpenCodeArgs): Promise<void> {
 	try {
 		// Gather project context
 		const context = await gatherProjectContext();
 
-		// Determine execution mode
-		const isInteractiveMode = args.prompt === undefined || args.prompt === "";
-		const promptText =
+		// Extract initial prompt if provided
+		const initialPrompt =
 			typeof args.prompt === "string" && args.prompt.length > 0
 				? args.prompt
 				: undefined;
 
-		if (isInteractiveMode) {
-			await runInteractiveSession(context);
-		} else if (promptText) {
-			await runSinglePrompt(promptText, context);
-		} else {
-			// Fallback to interactive mode if prompt flag is present but empty
-			await runInteractiveSession(context);
-		}
+		// Always launch interactive session, optionally with initial prompt
+		await runInteractiveSession(context, initialPrompt);
 	} catch (error) {
 		if (error instanceof Error) {
 			logger.error(`OpenCode integration error: ${error.message}`);
@@ -165,9 +158,19 @@ async function gatherProjectContext(): Promise<ProjectContext> {
 
 /**
  * Launch OpenCode in interactive TUI mode
+ * Optionally sends an initial prompt after launch
  */
-async function runInteractiveSession(context: ProjectContext): Promise<void> {
-	logger.log("Launching OpenCode AI assistant...");
+async function runInteractiveSession(
+	context: ProjectContext,
+	initialPrompt?: string
+): Promise<void> {
+	if (initialPrompt) {
+		logger.log(
+			`Launching OpenCode AI assistant with prompt: "${initialPrompt}"`
+		);
+	} else {
+		logger.log("Launching OpenCode AI assistant...");
+	}
 
 	// Write context to temporary file
 	const contextFile = await writeContextFile(context);
@@ -176,8 +179,14 @@ async function runInteractiveSession(context: ProjectContext): Promise<void> {
 		// Get OpenCode command and args
 		const { command, args } = getOpenCodeCommand();
 
+		// Build command arguments - add initial prompt if provided
+		const commandArgs = [...args, context.projectRoot];
+		if (initialPrompt) {
+			commandArgs.push("--initial-prompt", initialPrompt);
+		}
+
 		// Spawn OpenCode TUI process
-		const child = spawn(command, [...args, context.projectRoot], {
+		const child = spawn(command, commandArgs, {
 			stdio: "inherit",
 			env: {
 				...process.env,
@@ -197,57 +206,6 @@ async function runInteractiveSession(context: ProjectContext): Promise<void> {
 
 			child.on("error", (error) => {
 				reject(new Error(`Failed to launch OpenCode: ${error.message}`));
-			});
-		});
-	} finally {
-		// Clean up context file
-		try {
-			const fs = await import("fs/promises");
-			await fs.unlink(contextFile);
-		} catch {
-			// Ignore cleanup errors
-		}
-	}
-}
-
-/**
- * Run OpenCode with a single prompt and return the result
- */
-async function runSinglePrompt(
-	prompt: string,
-	context: ProjectContext
-): Promise<void> {
-	logger.log(`Running OpenCode with prompt: "${prompt}"`);
-
-	// Write context to temporary file
-	const contextFile = await writeContextFile(context);
-
-	try {
-		// Get OpenCode command and args
-		const { command, args } = getOpenCodeCommand();
-
-		// Spawn OpenCode run process
-		const child = spawn(command, [...args, "run", prompt], {
-			stdio: "inherit",
-			env: {
-				...process.env,
-				OPENCODE_CONTEXT_FILE: contextFile,
-			},
-			cwd: context.projectRoot,
-		});
-
-		// Wait for process to complete
-		await new Promise<void>((resolve, reject) => {
-			child.on("exit", (code) => {
-				if (code === 0) {
-					resolve();
-				} else {
-					reject(new Error(`OpenCode exited with code ${code}`));
-				}
-			});
-
-			child.on("error", (error) => {
-				reject(new Error(`Failed to run OpenCode: ${error.message}`));
 			});
 		});
 	} finally {
