@@ -101,282 +101,137 @@ packages/
 
 #### Step 2.1: Add OpenCode Command Line Options
 
-1. **Update Wrangler CLI argument parser** in `packages/wrangler/src/index.ts`:
+1. **Extend Wrangler CLI argument parser** to support:
 
-```typescript
-// Add new global options for OpenCode integration
-.option("p", {
-  describe: "Launch OpenCode AI assistant",
-  alias: "prompt",
-  type: "string",
-  requiresArg: false,
-})
-.option("opencode", {
-  describe: "OpenCode-specific options",
-  type: "boolean",
-  hidden: true, // Internal flag
-})
-```
+   - `-p` / `--prompt` flag for launching OpenCode
+   - Optional positional argument for direct questions
+   - Interactive mode override option
 
-2. **Add OpenCode command handler** before the catch-all command:
-
-```typescript
-// Add before the ["*"] command registration
-wrangler.command(
-	["prompt [question]", "p [question]"],
-	"Launch OpenCode AI assistant for Workers development",
-	(yargs) => {
-		return yargs
-			.positional("question", {
-				describe: "Optional question to ask the AI assistant",
-				type: "string",
-			})
-			.option("interactive", {
-				describe: "Force interactive mode even with a question",
-				type: "boolean",
-				default: false,
-			});
-	},
-	async (args) => {
-		const { launchOpenCode } = await import("../opencode/integration");
-		await launchOpenCode(args);
-	}
-);
-```
+2. **Add command handler** that:
+   - Detects execution mode (interactive vs single prompt)
+   - Imports OpenCode integration module dynamically
+   - Passes parsed arguments to integration layer
 
 #### Step 2.2: Create OpenCode Integration Module
 
-1. **Create integration module** at `packages/wrangler/src/opencode/integration.ts`:
+**Purpose**: Bridge between Wrangler CLI and OpenCode packages
 
-```typescript
-import { spawn } from "child_process";
-import { resolve } from "path";
-import { detectWranglerConfig } from "../config";
-import { logger } from "../logger";
+**Key Responsibilities**:
 
-export interface OpenCodeArgs {
-	question?: string;
-	interactive?: boolean;
-	config?: string;
-}
+- **Context Gathering**: Collect Wrangler configuration and project metadata
+- **Execution Mode Detection**: Route to appropriate OpenCode interface
+- **Process Management**: Spawn and manage OpenCode processes
+- **Error Handling**: Graceful degradation when OpenCode unavailable
 
-export async function launchOpenCode(args: OpenCodeArgs): Promise<void> {
-	try {
-		// Detect Workers project context
-		const projectContext = await gatherProjectContext(args.config);
+**Integration Interfaces**:
 
-		// Determine execution mode
-		if (args.question && !args.interactive) {
-			await runSinglePrompt(args.question, projectContext);
-		} else {
-			await runInteractiveSession(args.question, projectContext);
-		}
-	} catch (error) {
-		logger.error("Failed to launch OpenCode:", error);
-		throw error;
-	}
-}
+- `launchOpenCode(args)` - Main entry point from CLI
+- `gatherProjectContext()` - Collect Workers project context
+- `runSinglePrompt()` - Execute single question mode
+- `runInteractiveSession()` - Launch TUI mode
 
-async function gatherProjectContext(configPath?: string) {
-	// Gather Wrangler configuration and project context
-	const config = await detectWranglerConfig(configPath);
+**Process Architecture**:
 
-	return {
-		wranglerConfig: config,
-		projectRoot: process.cwd(),
-		// Add more context as needed
-	};
-}
-
-async function runSinglePrompt(question: string, context: any): Promise<void> {
-	// Implementation for single prompt mode
-	const opencodePath = resolve(
-		__dirname,
-		"../../opencode/opencode/bin/opencode"
-	);
-
-	const child = spawn("node", [opencodePath, "ask", question], {
-		stdio: "inherit",
-		env: {
-			...process.env,
-			WRANGLER_CONTEXT: JSON.stringify(context),
-		},
-	});
-
-	return new Promise((resolve, reject) => {
-		child.on("close", (code) => {
-			if (code === 0) {
-				resolve();
-			} else {
-				reject(new Error(`OpenCode exited with code ${code}`));
-			}
-		});
-	});
-}
-
-async function runInteractiveSession(
-	initialQuestion?: string,
-	context?: any
-): Promise<void> {
-	// Implementation for interactive TUI mode
-	const tuiPath = resolve(__dirname, "../../opencode/tui/cmd/tui");
-
-	const args = ["serve"];
-	if (initialQuestion) {
-		args.push("--initial-prompt", initialQuestion);
-	}
-
-	const child = spawn(tuiPath, args, {
-		stdio: "inherit",
-		env: {
-			...process.env,
-			WRANGLER_CONTEXT: JSON.stringify(context),
-		},
-	});
-
-	return new Promise((resolve, reject) => {
-		child.on("close", (code) => {
-			if (code === 0) {
-				resolve();
-			} else {
-				reject(new Error(`OpenCode TUI exited with code ${code}`));
-			}
-		});
-	});
-}
-```
+- Single prompt mode: Spawn Node.js process for core OpenCode package
+- Interactive mode: Spawn Go binary for TUI package
+- Context passing: Environment variables with JSON-serialized project data
 
 ### Phase 3: Build System Integration (Week 3-4)
 
 #### Step 3.1: Update Build Configuration
 
-1. **Update Wrangler's `tsup.config.ts`** to handle OpenCode dependencies:
+**Dependency Management Strategy**:
 
-```typescript
-// Add to EXTERNAL_DEPENDENCIES in packages/wrangler/scripts/deps.ts
-export const EXTERNAL_DEPENDENCIES = [
-	// ... existing dependencies
-	"opencode", // Keep OpenCode external for POC
-];
-```
+- Keep OpenCode packages as external dependencies for POC simplicity
+- Add workspace reference in Wrangler's package.json
+- Avoid bundling OpenCode to minimize build complexity
 
-2. **Update Wrangler's `package.json`** to include OpenCode as dependency:
+**Key Changes**:
 
-```json
-{
-	"dependencies": {
-		// ... existing dependencies
-		"opencode": "workspace:*"
-	}
-}
-```
+- Update `EXTERNAL_DEPENDENCIES` to exclude OpenCode from bundling
+- Add workspace dependency reference: `"opencode": "workspace:*"`
+- Ensure build process can locate OpenCode binaries at runtime
 
 #### Step 3.2: Update Turbo Configuration
 
-1. **Add OpenCode packages to build pipeline** in `turbo.json`:
+**Build Pipeline Integration**:
 
-```json
-{
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputLogs": "new-only"
-		}
-	}
-}
-```
+- Include OpenCode packages in monorepo build dependency graph
+- Ensure proper build ordering (OpenCode before Wrangler)
+- Handle mixed language builds (TypeScript + Go)
 
-2. **Create individual turbo.json files** for OpenCode packages as needed.
+**Configuration Updates**:
+
+- Add OpenCode packages to Turbo task dependencies
+- Create package-specific turbo.json files for custom build steps
+- Configure Go build tasks for TUI package
 
 ### Phase 4: Workers Context Integration (Week 4-5)
 
 #### Step 4.1: Enhance Context Detection
 
-1. **Extend project context gathering** in integration module:
+**Configuration Detection**:
 
-```typescript
-async function gatherProjectContext(configPath?: string) {
-	const config = await detectWranglerConfig(configPath);
+- Support all Wrangler configuration variants (wrangler.toml, wrangler.json, wrangler.jsonc)
+- Parse and extract relevant project metadata
+- Detect Workers runtime version and compatibility settings
 
-	// Detect all Wrangler configuration variants
-	const configFiles = await detectAllConfigFiles();
+**Binding Analysis**:
 
-	// Analyze bindings and services
-	const bindings = analyzeBindings(config);
+- Identify configured bindings (KV, D1, R2, Queues, etc.)
+- Extract binding names and configuration details
+- Categorize bindings by type for AI context
 
-	return {
-		wranglerConfig: config,
-		configFiles,
-		bindings,
-		projectRoot: process.cwd(),
-		workersRuntime: config?.compatibility_date,
-		// Add Workers-specific context
-	};
-}
+**Project Context Structure**:
 
-async function detectAllConfigFiles(): Promise<string[]> {
-	const configFiles = [];
-	const possibleConfigs = ["wrangler.toml", "wrangler.json", "wrangler.jsonc"];
-
-	for (const configFile of possibleConfigs) {
-		if (await fileExists(configFile)) {
-			configFiles.push(configFile);
-		}
-	}
-
-	return configFiles;
-}
-
-function analyzeBindings(config: any) {
-	// Extract and categorize bindings (KV, D1, R2, etc.)
-	return {
-		kv: config?.kv_namespaces || [],
-		d1: config?.d1_databases || [],
-		r2: config?.r2_buckets || [],
-		queues: config?.queues || [],
-		// ... other binding types
-	};
+```
+{
+  wranglerConfig: ParsedConfig,
+  configFiles: string[],
+  bindings: BindingsByType,
+  projectRoot: string,
+  workersRuntime: string
 }
 ```
 
 #### Step 4.2: Create Workers Knowledge Integration
 
-1. **Create Workers documentation integration** for OpenCode:
-   - Configure OpenCode to use Cloudflare Workers documentation
-   - Add Workers-specific system prompts
-   - Integrate with Cloudflare API documentation
+**Documentation Integration**:
+
+- Configure OpenCode to access Cloudflare Workers documentation
+- Implement Workers-specific system prompts and knowledge base
+- Enable real-time API reference lookup
+
+**Context Enhancement**:
+
+- Pass Workers project context to OpenCode via environment variables
+- Enable AI to understand current project's binding configuration
+- Provide Workers-specific code suggestions and best practices
 
 ## Build and Deployment
 
 ### Development Workflow
 
-1. **Install dependencies**:
+**Setup Process**:
 
-   ```bash
-   pnpm install
-   ```
+1. Install dependencies across all packages (`pnpm install`)
+2. Build OpenCode packages before Wrangler
+3. Verify binary paths and permissions for Go TUI executable
 
-2. **Build all packages**:
+**Testing Commands**:
 
-   ```bash
-   pnpm build
-   ```
-
-3. **Test Wrangler with OpenCode**:
-
-   ```bash
-   # Interactive mode
-   ./packages/wrangler/bin/wrangler.js -p
-
-   # Single prompt mode
-   ./packages/wrangler/bin/wrangler.js -p "How do I add a KV binding?"
-   ```
+- Interactive mode: `wrangler -p`
+- Single prompt mode: `wrangler -p "question"`
+- Verify context detection with sample Workers projects
 
 ### Testing Strategy
 
-1. **Unit Tests**: Test integration module functions
-2. **Integration Tests**: Test CLI argument parsing and command execution
-3. **E2E Tests**: Test full workflow with sample Workers projects
+**Test Coverage Areas**:
+
+1. **Unit Tests**: Integration module functions and context gathering
+2. **Integration Tests**: CLI argument parsing and process spawning
+3. **E2E Tests**: Full workflow with various Workers project configurations
+4. **Cross-Platform Tests**: Windows, macOS, Linux compatibility
 
 ## Success Criteria
 
