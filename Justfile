@@ -142,6 +142,46 @@ publish-preview:
     @echo "This will trigger the prerelease workflow on push to opencode branch"
     git push origin opencode
 
+# Publish OpenCode packages to npm
+publish-opencode:
+    @echo "📦 Publishing OpenCode packages to npm..."
+    cd packages/opencode/opencode && pnpm publish
+
+# Publish Wrangler package to npm
+publish-wrangler:
+    @echo "📦 Publishing @jahands/wrangler to npm..."
+    cd packages/wrangler && pnpm publish
+
+# Publish both OpenCode and Wrangler packages
+publish-all: build-opencode build-wrangler
+    @echo "📦 Publishing all packages to npm..."
+    just publish-opencode
+    just publish-wrangler
+    @echo "✅ All packages published successfully!"
+
+# Publish with version bump (patch)
+publish-patch:
+    @echo "📦 Publishing with patch version bump..."
+    cd packages/opencode/opencode && pnpm version patch && pnpm publish
+    cd packages/wrangler && pnpm version patch && pnpm publish
+    @echo "✅ Published with patch version bump!"
+
+# Publish with version bump (minor)
+publish-minor:
+    @echo "📦 Publishing with minor version bump..."
+    cd packages/opencode/opencode && pnpm version minor && pnpm publish
+    cd packages/wrangler && pnpm version minor && pnpm publish
+    @echo "✅ Published with minor version bump!"
+
+# Dry run publish (check what would be published)
+publish-dry-run:
+    @echo "🔍 Dry run publish check..."
+    @echo "OpenCode package:"
+    cd packages/opencode/opencode && pnpm publish --dry-run
+    @echo ""
+    @echo "Wrangler package:"
+    cd packages/wrangler && pnpm publish --dry-run
+
 # Show help for common development workflows
 help:
     @echo "🛠️  Common Development Workflows:"
@@ -161,6 +201,12 @@ help:
     @echo "Package management:"
     @echo "  just use-workspace     # Use local packages"
     @echo "  just use-published 123 # Use packages from PR #123"
+    @echo ""
+    @echo "Publishing:"
+    @echo "  just publish-dry-run   # Check what would be published"
+    @echo "  just publish-all       # Publish both packages"
+    @echo "  just publish-patch     # Publish with patch version bump"
+    @echo "  just publish-minor     # Publish with minor version bump"
     @echo ""
     @echo "Debugging:"
     @echo "  just status  # Check build status"
