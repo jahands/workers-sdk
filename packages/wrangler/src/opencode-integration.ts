@@ -250,8 +250,37 @@ function getOpenCodeCommand(): { command: string; args: string[] } {
 	// Try to find the installed package
 	try {
 		// For published packages, try to find the binary
-		const opencodePkg = require.resolve("@jahands/opencode-cf/package.json");
-		const opencodeDir = resolve(opencodePkg, "..");
+		// Handle both CommonJS and ES modules by trying multiple resolution strategies
+		let opencodeDir: string | undefined;
+
+		try {
+			// Try CommonJS resolution first
+			const opencodePkg = require.resolve("@jahands/opencode-cf/package.json");
+			opencodeDir = resolve(opencodePkg, "..");
+		} catch {
+			// Fallback: manually construct the path for ES modules
+			// Look for the package in node_modules starting from current directory
+			let currentDir = process.cwd();
+
+			while (currentDir !== resolve(currentDir, "..")) {
+				const candidatePath = join(
+					currentDir,
+					"node_modules",
+					"@jahands",
+					"opencode-cf"
+				);
+				if (existsSync(join(candidatePath, "package.json"))) {
+					opencodeDir = candidatePath;
+					break;
+				}
+				currentDir = resolve(currentDir, "..");
+			}
+		}
+
+		if (!opencodeDir) {
+			throw new Error("Package not found in node_modules");
+		}
+
 		const binPath = join(opencodeDir, "bin", "opencode");
 
 		if (existsSync(binPath)) {

@@ -113,19 +113,25 @@ function main() {
 
 	// 4. Build packages
 	console.log(`🔨 Building packages...`);
-	execCommand(
-		"pnpm turbo build --filter=@jahands/opencode-cf --filter=@jahands/wrangler"
+
+	// Build and publish OpenCode with all platform binaries
+	// Note: This script builds AND publishes all platform packages + main package
+	console.log(
+		`🔨 Building and publishing OpenCode with all platform binaries...`
 	);
+	execCommand("bun run script/publish.ts", {
+		cwd: "packages/opencode/opencode",
+	});
 
-	// 5. Publish OpenCode first (wrangler depends on it)
-	console.log(`📦 Publishing @jahands/opencode-cf@${opencodeVersion}...`);
-	execCommand("pnpm publish", { cwd: "packages/opencode/opencode" });
+	// Build Wrangler
+	console.log(`🔨 Building Wrangler...`);
+	execCommand("pnpm turbo build --filter=@jahands/wrangler");
 
-	// 6. Publish Wrangler
+	// 5. Publish Wrangler
 	console.log(`📦 Publishing @jahands/wrangler@${wranglerVersion}...`);
 	execCommand("pnpm publish", { cwd: "packages/wrangler" });
 
-	// 7. Commit changes
+	// 6. Commit changes
 	console.log(`📝 Committing version changes...`);
 	execCommand(
 		"git add packages/opencode/opencode/package.json packages/wrangler/package.json"
