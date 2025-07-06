@@ -70,7 +70,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- `wrangler -p "how do I add a queue to my worker"` launches OpenCode with the prompt
+- `wrangler -p "how do I add a queue to my worker"` launches OpenCode interactively and automatically sends the prompt
 - OpenCode has context about the current Workers project
 - OpenCode can suggest appropriate code changes and configurations
 
@@ -83,6 +83,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Acceptance Criteria:**
 
 - `wrangler -p` or `wrangler --prompt` launches interactive OpenCode TUI
+- `wrangler -p <prompt>` launches interactive OpenCode TUI and automatically sends the prompt
 - OpenCode can search Workers APIs, bindings, and configuration information
 - OpenCode can read and modify project files with Workers context
 
@@ -112,7 +113,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 - `wrangler -p` launches interactive AI assistant
 - `wrangler --prompt` launches interactive AI assistant
-- `wrangler -p "question"` runs single prompt and returns answer
+- `wrangler -p "question"` launches interactive AI assistant and automatically sends the question
 - Assistant launches within 3 seconds on typical developer machines
 
 #### REQ2: Workers Context Awareness

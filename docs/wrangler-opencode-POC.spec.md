@@ -98,11 +98,12 @@ packages/
 1. **Extend Wrangler CLI argument parser** to support:
 
    - `-p` / `--prompt` flag for launching OpenCode
-   - Optional positional argument for direct questions
-   - Interactive mode override option
+   - Optional positional argument for initial messages
+   - Both modes launch interactive OpenCode TUI
 
 2. **Add command handler** that:
-   - Detects execution mode (interactive vs single prompt)
+   - Launches interactive OpenCode TUI for both `-p` and `-p <prompt>`
+   - Automatically sends prompt when provided
    - Imports OpenCode integration module dynamically
    - Passes parsed arguments to integration layer
 
@@ -113,7 +114,7 @@ packages/
 **Key Responsibilities**:
 
 - **Context Gathering**: Collect Wrangler configuration and project metadata
-- **Execution Mode Detection**: Route to appropriate OpenCode interface
+- **Interactive Session Management**: Launch OpenCode TUI for both modes
 - **Process Management**: Spawn and manage OpenCode processes
 - **Error Handling**: Graceful degradation when OpenCode unavailable
 
@@ -121,13 +122,12 @@ packages/
 
 - `launchOpenCode(args)` - Main entry point from CLI
 - `gatherProjectContext()` - Collect Workers project context
-- `runSinglePrompt()` - Execute single question mode
-- `runInteractiveSession()` - Launch TUI mode
+- `runInteractiveSession(initialPrompt?)` - Launch TUI mode with optional initial message
 
 **Process Architecture**:
 
-- Single prompt mode: Spawn Node.js process for OpenCode from npm package
-- Interactive mode: Spawn Go binary distributed with `@jahands/opencode-cf`
+- Both modes: Spawn Go binary distributed with `@jahands/opencode-cf` for interactive TUI
+- Initial prompt: Pass prompt to OpenCode which automatically sends it after launch
 - Context passing: Temporary files with JSON-serialized project data
 - Asset resolution: Use `require.resolve()` to locate OpenCode binaries in node_modules
 
@@ -325,7 +325,7 @@ pnpm install  # Restores workspace links
 **Testing Commands**:
 
 - Interactive mode: `wrangler -p`
-- Single prompt mode: `wrangler -p "question"`
+- Interactive mode with initial message: `wrangler -p "question"`
 - Verify context detection with sample Workers projects
 
 ## Success Criteria
@@ -333,7 +333,7 @@ pnpm install  # Restores workspace links
 ### Functional Requirements
 
 - [ ] `wrangler -p` launches interactive OpenCode TUI
-- [ ] `wrangler -p "question"` runs single prompt and returns answer
+- [ ] `wrangler -p "question"` launches interactive OpenCode TUI and automatically sends the question
 - [ ] OpenCode detects Wrangler configuration files (all variants)
 - [ ] OpenCode understands Workers project context (bindings, runtime version)
 - [ ] OpenCode dependency installs successfully on macOS
