@@ -89,6 +89,14 @@ func (a appModel) Init() tea.Cmd {
 		return dialog.ShowInitDialogMsg{Show: shouldShow}
 	})
 
+	// Check for initial prompt from environment variable
+	if initialPrompt := os.Getenv("OPENCODE_INITIAL_PROMPT"); initialPrompt != "" {
+		cmds = append(cmds, func() tea.Msg {
+			// Send the initial prompt automatically
+			return app.SendMsg{Text: initialPrompt, Attachments: []opencode.FilePartParam{}}
+		})
+	}
+
 	return tea.Batch(cmds...)
 }
 
@@ -609,8 +617,8 @@ func (a appModel) home(width int) string {
 	muted := styles.NewStyle().Foreground(t.TextMuted()).Background(t.Background()).Render
 
 	open := `
-█▀▀█ █▀▀█ █▀▀ █▀▀▄ 
-█░░█ █░░█ █▀▀ █░░█ 
+█▀▀█ █▀▀█ █▀▀ █▀▀▄
+█░░█ █░░█ █▀▀ █░░█
 ▀▀▀▀ █▀▀▀ ▀▀▀ ▀  ▀ `
 	code := `
 █▀▀ █▀▀█ █▀▀▄ █▀▀
