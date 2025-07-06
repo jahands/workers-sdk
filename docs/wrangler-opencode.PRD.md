@@ -437,7 +437,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 ### Post-Launch Enhancements (6+ months)
 
-- **Advanced Code Understanding:** Deep analysis of Workers patterns and anti-patterns
+- **Enhanced Workers Guidance:** Improved Workers pattern suggestions and best practices
 - **Deployment Integration:** AI assistance for deployment strategies and troubleshooting
 - **Dashboard Integration:** Sync AI insights with Cloudflare Dashboard analytics
 - **Team Collaboration:** Shared AI sessions and knowledge bases for development teams
