@@ -18,6 +18,15 @@
 			"dependsOn": ["^build"],
 			"outputLogs": "new-only"
 		},
+		"build:tui": {
+			"cache": true,
+			"outputs": ["../opencode/dist/tui"]
+		},
+		"opencode#build": {
+			"dependsOn": ["opencode-tui#build:tui"],
+			"outputs": ["dist/**"],
+			"cache": true
+		},
 		"test": {
 			"dependsOn": ["build"]
 		},

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-tui",
+  "version": "0.0.5",
+  "private": true,
+  "description": "OpenCode Terminal UI (Go)",
+  "scripts": {
+    "build": "./scripts/build.sh",
+    "build:tui": "./scripts/build.sh"
+  },
+  "keywords": ["go", "tui", "terminal", "opencode"],
+  "author": "Jacob Hands",
+  "license": "MIT"
+}
