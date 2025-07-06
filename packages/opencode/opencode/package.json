@@ -55,5 +55,8 @@
 	},
 	"publishConfig": {
 		"name": "@jahands/opencode-cf"
+	},
+	"workers-sdk": {
+		"prerelease": true
 	}
 }

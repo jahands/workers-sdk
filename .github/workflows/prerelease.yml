@@ -9,6 +9,7 @@ on:
       - workflows
       - next
       - v3-maintenance
+      - opencode
 
 permissions:
   contents: read
@@ -26,6 +27,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
 
       - name: Install Dependencies
         uses: ./.github/actions/install-dependencies
