@@ -614,7 +614,7 @@ func (a appModel) home(width int) string {
 	t := theme.CurrentTheme()
 	baseStyle := styles.NewStyle().Background(t.Background())
 	base := baseStyle.Render
-	muted := styles.NewStyle().Foreground(t.TextMuted()).Background(t.Background()).Render
+	muted := styles.NewStyle().Foreground(t.TextMuted()).Render
 
 	wrangler := `
 █░█░█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █░░ █▀▀ █▀▀█
