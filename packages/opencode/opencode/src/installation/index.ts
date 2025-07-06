@@ -139,8 +139,8 @@ export namespace Installation {
 		typeof OPENCODE_VERSION === "string" ? OPENCODE_VERSION : "dev";
 
 	export async function latest() {
-		return fetch("https://api.github.com/repos/sst/opencode/releases/latest")
-			.then((res) => res.json())
-			.then((data) => data.tag_name.slice(1) as string);
+		// For POC: Return current version to disable auto updates
+		// TODO: Point to custom release source when POC has its own release cycle
+		return VERSION;
 	}
 }
