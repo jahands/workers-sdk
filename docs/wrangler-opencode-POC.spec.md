@@ -245,9 +245,63 @@ Use standard npm publishing workflow:
 - Update package detection to look for custom package names
 - Configure version checking for POC release cycle
 
-### Phase 4: Workers Context Integration (Week 4-5)
+### Phase 4: UI Polish and Branding (Week 4)
 
-#### Step 4.1: Enhance Context Detection
+#### Step 4.1: Update OpenCode Branding
+
+**Problem**: Currently OpenCode displays "opencode" in the chat interface, but for the Wrangler integration we want it to show "Wrangler" with "Powered by OpenCode" in smaller text.
+
+**Current UI**: The startup screen shows "OPENCODE" in large ASCII art with version number.
+
+**Target UI Changes**:
+
+- Replace "OPENCODE" branding with "WRANGLER" in the main display
+- Add "Powered by OpenCode" subtitle in smaller text
+- Maintain existing version display and command structure
+- Preserve OpenCode functionality while updating visual branding
+
+**Implementation Strategy**:
+
+**UI Component Updates**:
+
+- Modify TUI startup screen to display "WRANGLER" instead of "OPENCODE"
+- Add subtitle text "Powered by OpenCode" below main branding
+- Update any chat interface elements that show "opencode" to show "Wrangler"
+- Maintain existing color scheme and layout structure
+
+**Configuration Approach**:
+
+- Add branding configuration options to OpenCode packages
+- Allow customization of display name and subtitle text
+- Pass branding configuration from Wrangler integration
+- Ensure changes don't affect core OpenCode functionality
+
+**Key Files to Modify**:
+
+- TUI startup screen and branding components
+- Chat interface display elements
+- Any help text or about information that shows product name
+- Configuration files that control UI text and branding
+
+#### Step 4.2: Integration Testing
+
+**Verification Steps**:
+
+- Confirm "WRANGLER" appears in startup screen instead of "OPENCODE"
+- Verify "Powered by OpenCode" subtitle is visible and properly formatted
+- Test that all existing functionality remains intact
+- Ensure branding changes apply consistently across all UI elements
+
+**User Experience Validation**:
+
+- Startup experience feels native to Wrangler ecosystem
+- Branding clearly indicates this is Wrangler with OpenCode technology
+- No confusion about which tool is being used
+- Maintains professional appearance and usability
+
+### Phase 5: Workers Context Integration (Week 5-6)
+
+#### Step 5.1: Enhance Context Detection
 
 **Configuration Detection**:
 
@@ -273,7 +327,7 @@ Use standard npm publishing workflow:
 }
 ```
 
-#### Step 4.2: Create Workers Knowledge Integration
+#### Step 5.2: Create Workers Knowledge Integration
 
 **Documentation Integration**:
 
@@ -489,4 +543,4 @@ The implementation has been updated to meet the new requirements where both `wra
 
 ## Status
 
-✅ **Phase 3 Complete** - Multi-platform build system integrated, npm publishing configured, all build and integration tests passing. Ready for Phase 4 (Workers Context Integration).
+✅ **Phase 3 Complete** - Multi-platform build system integrated, npm publishing configured, all build and integration tests passing. Ready for Phase 4 (UI Polish and Branding).
