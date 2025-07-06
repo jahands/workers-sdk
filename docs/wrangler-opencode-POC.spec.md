@@ -329,12 +329,17 @@ Use standard npm publishing workflow:
 
 #### Step 5.2: Implement Cloudflare Documentation Integration
 
+**MCP Integration Approach**:
+
+OpenCode has robust Model Context Protocol (MCP) support that allows integration of external tools and knowledge sources. We can leverage the official Cloudflare Docs MCP server to provide seamless documentation access.
+
 **Implementation**:
 
-- Integrate Cloudflare Workers documentation search into OpenCode
-- Add Workers-specific system prompts and knowledge base
-- Enable real-time API reference lookup during conversations
-- Match documentation to detected project bindings (show D1 docs when D1 bindings detected)
+- **Hard-code Cloudflare Docs MCP server**: Modify OpenCode's MCP initialization to always include the official Cloudflare Docs MCP server (`https://docs.mcp.cloudflare.com/sse`) as a built-in server
+- **No user configuration required**: The MCP server will be automatically available without requiring users to configure anything
+- **Automatic tool availability**: The `search_cloudflare_documentation` tool will be automatically available to the LLM alongside built-in tools
+- **Seamless integration**: Documentation search becomes part of the natural conversation flow without explicit commands
+- **Context-aware suggestions**: The AI can proactively search Cloudflare docs when discussing Workers, R2, D1, KV, or other Cloudflare services
 
 #### Step 5.3: Implement Workers Context Passing
 
