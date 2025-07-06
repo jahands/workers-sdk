@@ -3560,8 +3560,8 @@ importers:
         specifier: 2.3.3
         version: 2.3.3(unenv@2.0.0-rc.17)(workerd@1.20250617.0)
       '@jahands/opencode-cf':
-        specifier: workspace:*
-        version: link:../opencode/opencode
+        specifier: ^0.0.15
+        version: 0.0.15
       blake3-wasm:
         specifier: 2.1.5
         version: 2.1.5
@@ -5974,6 +5974,40 @@ packages:
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
+
+  '@jahands/opencode-cf-darwin-arm64@0.0.15':
+    resolution: {integrity: sha512-M+1hYWK6PyE3PNQt7xBqctw4MoCtrd1e9iV7Z29NTHtj5AkrrwZYGkWQA91dFi54LpM/fg+ohHKZtHcjMFRI0Q==}
+    cpu: [arm64]
+    os: [darwin]
+    hasBin: true
+
+  '@jahands/opencode-cf-darwin-x64@0.0.15':
+    resolution: {integrity: sha512-cl5eVcRbrfuBr50QolpuO2w9VWDucc9u1PTIse0B9nfjXBBWPryU5In3ME6CquhsFHcIkU+Wju03LpmTzF9G2Q==}
+    cpu: [x64]
+    os: [darwin]
+    hasBin: true
+
+  '@jahands/opencode-cf-linux-arm64@0.0.15':
+    resolution: {integrity: sha512-cqkmXlq7ozYhOujDCIHiHsoxbbv3PFOe+Wl3efQgsMrxTx9KcXkl9N3CSkLhj5ub0Re4oiWNoq3lzWny7xphDw==}
+    cpu: [arm64]
+    os: [linux]
+    hasBin: true
+
+  '@jahands/opencode-cf-linux-x64@0.0.15':
+    resolution: {integrity: sha512-6vyd/kvAKkotaNKAZe6rFWTIdX7bfPUufWpWGtWEFXLFzdkvSFa8AouzuqJOhE0UlrECTeJrudP4EXZ9fg7OEQ==}
+    cpu: [x64]
+    os: [linux]
+    hasBin: true
+
+  '@jahands/opencode-cf-windows-x64@0.0.15':
+    resolution: {integrity: sha512-tkpW2skt+YuFBjZ4I+0csb4kBeXBVq3R5H4pRgt2MmOzqwaF4ftNpaoi5PcGcAfRwPUYHh+a0gL4WnzJw0SciA==}
+    cpu: [x64]
+    os: [win32]
+    hasBin: true
+
+  '@jahands/opencode-cf@0.0.15':
+    resolution: {integrity: sha512-0i6bjDNhXryuDl04KiGN+6fH3JRsQmiqx261vlQpoz86wRfaDn+kxw9R8cnrVIMKgYuDfGc2/wa8dOmDRFUryA==}
+    hasBin: true
 
   '@jest/expect-utils@29.7.0':
     resolution: {integrity: sha512-GlsNBWiFQFCVi9QVSx7f5AgMeLxe9YCCs5PuP2O2LdjDAA8Jh9eX7lA1Jq/xdXw3Wb3hyvlFNfZIfcRetSzYcA==}
@@ -17659,6 +17693,29 @@ snapshots:
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
+
+  '@jahands/opencode-cf-darwin-arm64@0.0.15':
+    optional: true
+
+  '@jahands/opencode-cf-darwin-x64@0.0.15':
+    optional: true
+
+  '@jahands/opencode-cf-linux-arm64@0.0.15':
+    optional: true
+
+  '@jahands/opencode-cf-linux-x64@0.0.15':
+    optional: true
+
+  '@jahands/opencode-cf-windows-x64@0.0.15':
+    optional: true
+
+  '@jahands/opencode-cf@0.0.15':
+    optionalDependencies:
+      '@jahands/opencode-cf-darwin-arm64': 0.0.15
+      '@jahands/opencode-cf-darwin-x64': 0.0.15
+      '@jahands/opencode-cf-linux-arm64': 0.0.15
+      '@jahands/opencode-cf-linux-x64': 0.0.15
+      '@jahands/opencode-cf-windows-x64': 0.0.15
 
   '@jest/expect-utils@29.7.0':
     dependencies:
