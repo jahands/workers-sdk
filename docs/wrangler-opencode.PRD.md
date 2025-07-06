@@ -140,6 +140,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - Assistant knows Workers platform limitations and best practices
 - Assistant can suggest appropriate Workers patterns for common use cases
 - Assistant provides accurate information about Workers pricing and limits
+- Assistant has access to current Cloudflare Workers documentation and API references
 
 #### REQ4: Code Generation and Modification
 
