@@ -617,9 +617,9 @@ func (a appModel) home(width int) string {
 
 
 	wrangler := `
-█░█░█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █░░ █▀▀ █▀▀█
-█▄█▄█ █▄▄▀ █▄▄█ █░░█ █░▀█ █░░ █▀▀ █▄▄▀
-▀░▀░▀ ▀░▀▀ ▀░░▀ ▀░░▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀░▀▀`
+█░█░█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █░░ █▀▀ █▀▀█   █▀▀█ ▀█▀
+█▄█▄█ █▄▄▀ █▄▄█ █░░█ █░▀█ █░░ █▀▀ █▄▄▀   █▄▄█ ░█░
+▀░▀░▀ ▀░▀▀ ▀░░▀ ▀░░▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀░▀▀   ▀░░▀ ▀▀▀`
 
 	wranglerRendered := base(wrangler)
 	wranglerWidth := lipgloss.Width(wranglerRendered)
