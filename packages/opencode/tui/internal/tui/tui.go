@@ -616,19 +616,18 @@ func (a appModel) home(width int) string {
 	base := baseStyle.Render
 	muted := styles.NewStyle().Foreground(t.TextMuted()).Background(t.Background()).Render
 
-	open := `
-█▀▀█ █▀▀█ █▀▀ █▀▀▄
-█░░█ █░░█ █▀▀ █░░█
-▀▀▀▀ █▀▀▀ ▀▀▀ ▀  ▀ `
-	code := `
-█▀▀ █▀▀█ █▀▀▄ █▀▀
-█░░ █░░█ █░░█ █▀▀
-▀▀▀ ▀▀▀▀ ▀▀▀  ▀▀▀`
+	wrangler := `
+█░█░█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █░░ █▀▀ █▀▀█
+█▄█▄█ █▄▄▀ █▄▄█ █░░█ █░▀█ █░░ █▀▀ █▄▄▀
+▀░▀░▀ ▀░▀▀ ▀░░▀ ▀░░▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀░▀▀`
 
-	logo := lipgloss.JoinHorizontal(
-		lipgloss.Top,
-		muted(open),
-		base(code),
+	subtitle := muted("Powered by OpenCode")
+
+	logo := lipgloss.JoinVertical(
+		lipgloss.Center,
+		base(wrangler),
+		"",
+		subtitle,
 	)
 	// cwd := app.Info.Path.Cwd
 	// config := app.Info.Path.Config
