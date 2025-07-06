@@ -1,0 +1,54 @@
+{
+	"folders": [
+		{
+			"path": "..",
+		},
+		{
+			"path": "../../opencode",
+		},
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"files.associations": {
+			"api-extractor.json": "jsonc",
+			"CODEOWNERS": "plaintext",
+			"*.template": "javascript",
+			"wrangler.json": "jsonc",
+		},
+		"augment.advanced": {
+			"mcpServers": [
+				{
+					"name": "llm-rules",
+					"command": "bun",
+					"args": ["x", "llm-rules@latest", "--dir", "${workspaceFolder}"],
+				},
+				{
+					"name": "context7",
+					"command": "bun",
+					"args": ["x", "@upstash/context7-mcp@latest"],
+				},
+				{
+					"name": "cloudflare-docs",
+					"command": "bun",
+					"args": [
+						"x",
+						"mcp-remote@latest",
+						"https://docs.mcp.cloudflare.com/sse",
+					],
+				},
+			],
+		},
+		"amp.mcpServers": {
+			"llm-rules": {
+				"command": "bun",
+				"args": ["x", "llm-rules@latest"],
+			},
+			"cloudflare-docs": {
+				"url": "https://docs.mcp.cloudflare.com/sse",
+			},
+			"context7": {
+				"url": "https://mcp.context7.com/sse",
+			},
+		},
+	},
+}

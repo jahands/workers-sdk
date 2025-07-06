@@ -91,5 +91,40 @@
 			"mode": "auto"
 		}
 	],
-	"editor.formatOnSave": true
+	"editor.formatOnSave": true,
+	"augment.advanced": {
+		"mcpServers": [
+			{
+				"name": "llm-rules",
+				"command": "${workspaceFolder}/.vscode/bin/bun",
+				"args": ["x", "llm-rules@latest", "--dir", "${workspaceFolder}"]
+			},
+			{
+				"name": "context7",
+				"command": "${workspaceFolder}/.vscode/bin/bun",
+				"args": ["x", "@upstash/context7-mcp@latest"]
+			},
+			{
+				"name": "cloudflare-docs",
+				"command": "${workspaceFolder}/.vscode/bin/bun",
+				"args": [
+					"x",
+					"mcp-remote@latest",
+					"https://docs.mcp.cloudflare.com/sse"
+				]
+			}
+		]
+	},
+	"amp.mcpServers": {
+		"llm-rules": {
+			"command": "bun",
+			"args": ["x", "llm-rules@latest"]
+		},
+		"cloudflare-docs": {
+			"url": "https://docs.mcp.cloudflare.com/sse"
+		},
+		"context7": {
+			"url": "https://mcp.context7.com/sse"
+		}
+	}
 }

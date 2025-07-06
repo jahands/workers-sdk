@@ -1,0 +1,26 @@
+{
+	"permissions": {
+		"allow": [
+			"mcp__llm-rules__cursor_rule_cursor-rules",
+			"Bash(bunx wrangler:*)",
+			"mcp__llm-rules__cursor_rule_sub-agent-usage",
+			"WebFetch(domain:docs.astral.sh)",
+			"Bash(uv run:*)",
+			"Bash(jq:*)",
+			"Bash(rm:*)",
+			"Bash(grep:*)",
+			"Bash(pnpm run build:*)",
+			"Bash(node:*)",
+			"Bash(pnpm build:*)",
+			"Bash(/dev/null)",
+			"Bash(pnpm check:*)",
+			"Bash(pnpm run check:lint:*)",
+			"Bash(pnpm run check:type:*)",
+			"Bash(pnpm run:*)",
+			"Bash(rg:*)",
+			"Bash(sed:*)",
+			"Bash(find:*)"
+		]
+	},
+	"enableAllProjectMcpServers": true
+}
