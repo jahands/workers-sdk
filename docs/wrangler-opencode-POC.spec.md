@@ -325,15 +325,6 @@ pnpm install  # Restores workspace links
 - Single prompt mode: `wrangler -p "question"`
 - Verify context detection with sample Workers projects
 
-### Testing Strategy
-
-**Test Coverage Areas**:
-
-1. **Unit Tests**: Integration module functions and context gathering
-2. **Integration Tests**: CLI argument parsing and process spawning
-3. **E2E Tests**: Full workflow with various Workers project configurations
-4. **Platform Tests**: macOS compatibility (POC scope)
-
 ## Success Criteria
 
 ### Functional Requirements
