@@ -61,7 +61,8 @@ for (const [os, arch] of targets) {
 	);
 
 	// Build TypeScript with embedded TUI binary
-	await $`bun build --define OPENCODE_VERSION="'${version}'" --compile --minify --target=bun-${os}-${arch} --outfile=dist/${name}/bin/opencode ./src/index.ts ./dist/${name}/bin/tui`;
+	const executableName = os === "windows" ? "opencode.exe" : "opencode";
+	await $`bun build --define OPENCODE_VERSION="'${version}'" --compile --minify --target=bun-${os}-${arch} --outfile=dist/${name}/bin/${executableName} ./src/index.ts ./dist/${name}/bin/tui`;
 	await $`rm -rf ./dist/${name}/bin/tui`;
 
 	// Create platform-specific package.json
@@ -72,9 +73,9 @@ for (const [os, arch] of targets) {
 				version,
 				os: [os === "windows" ? "win32" : os],
 				cpu: [arch],
-				main: "./bin/opencode",
+				main: `./bin/${executableName}`,
 				bin: {
-					opencode: "./bin/opencode",
+					opencode: `./bin/${executableName}`,
 				},
 				publishConfig: {
 					access: "public",
