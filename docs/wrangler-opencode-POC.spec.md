@@ -327,19 +327,23 @@ Use standard npm publishing workflow:
 }
 ```
 
-#### Step 5.2: Create Workers Knowledge Integration
+#### Step 5.2: Implement Cloudflare Documentation Integration
 
-**Documentation Integration**:
+**Implementation**:
 
-- Configure OpenCode to access Cloudflare Workers documentation
-- Implement Workers-specific system prompts and knowledge base
-- Enable real-time API reference lookup
+- Integrate Cloudflare Workers documentation search into OpenCode
+- Add Workers-specific system prompts and knowledge base
+- Enable real-time API reference lookup during conversations
+- Match documentation to detected project bindings (show D1 docs when D1 bindings detected)
 
-**Context Enhancement**:
+#### Step 5.3: Implement Workers Context Passing
 
-- Pass Workers project context to OpenCode via temporary files
-- Enable AI to understand current project's binding configuration
-- Provide Workers-specific code suggestions and best practices
+**Implementation**:
+
+- Design Workers project context interface (config, bindings, runtime info)
+- Extend existing Wrangler config parsing to extract comprehensive metadata
+- Serialize context to temporary JSON file and pass via environment variable
+- Sanitize sensitive data before passing to OpenCode
 
 ## Build and Deployment
 
