@@ -1,110 +1,133 @@
-import { experimental_createMCPClient, type Tool } from "ai"
-import { Experimental_StdioMCPTransport } from "ai/mcp-stdio"
-import { App } from "../app/app"
-import { Config } from "../config/config"
-import { Log } from "../util/log"
-import { NamedError } from "../util/error"
-import { z } from "zod"
-import { Session } from "../session"
-import { Bus } from "../bus"
+import { experimental_createMCPClient } from "ai";
+import { Experimental_StdioMCPTransport } from "ai/mcp-stdio";
+import { z } from "zod";
+import { App } from "../app/app";
+import { Bus } from "../bus";
+import { Config } from "../config/config";
+import { Session } from "../session";
+import { NamedError } from "../util/error";
+import { Log } from "../util/log";
+import type { Tool } from "ai";
 
 export namespace MCP {
-  const log = Log.create({ service: "mcp" })
+	const log = Log.create({ service: "mcp" });
 
-  export const Failed = NamedError.create(
-    "MCPFailed",
-    z.object({
-      name: z.string(),
-    }),
-  )
+	export const Failed = NamedError.create(
+		"MCPFailed",
+		z.object({
+			name: z.string(),
+		})
+	);
 
-  const state = App.state(
-    "mcp",
-    async () => {
-      const cfg = await Config.get()
-      const clients: {
-        [name: string]: Awaited<ReturnType<typeof experimental_createMCPClient>>
-      } = {}
-      for (const [key, mcp] of Object.entries(cfg.mcp ?? {})) {
-        if (mcp.enabled === false) {
-          log.info("mcp server disabled", { key })
-          continue
-        }
-        log.info("found", { key, type: mcp.type })
-        if (mcp.type === "remote") {
-          const client = await experimental_createMCPClient({
-            name: key,
-            transport: {
-              type: "sse",
-              url: mcp.url,
-            },
-          }).catch(() => {})
-          if (!client) {
-            Bus.publish(Session.Event.Error, {
-              error: {
-                name: "UnknownError",
-                data: {
-                  message: `MCP server ${key} failed to start`,
-                },
-              },
-            })
-            continue
-          }
-          clients[key] = client
-        }
+	const state = App.state(
+		"mcp",
+		async () => {
+			const cfg = await Config.get();
+			const clients: {
+				[name: string]: Awaited<
+					ReturnType<typeof experimental_createMCPClient>
+				>;
+			} = {};
 
-        if (mcp.type === "local") {
-          const [cmd, ...args] = mcp.command
-          const client = await experimental_createMCPClient({
-            name: key,
-            transport: new Experimental_StdioMCPTransport({
-              stderr: "ignore",
-              command: cmd,
-              args,
-              env: {
-                ...process.env,
-                ...(cmd === "opencode" ? { BUN_BE_BUN: "1" } : {}),
-                ...mcp.environment,
-              },
-            }),
-          }).catch(() => {})
-          if (!client) {
-            Bus.publish(Session.Event.Error, {
-              error: {
-                name: "UnknownError",
-                data: {
-                  message: `MCP server ${key} failed to start`,
-                },
-              },
-            })
-            continue
-          }
-          clients[key] = client
-        }
-      }
+			// Always include built-in Cloudflare Docs MCP server
+			log.info("initializing built-in cloudflare-docs mcp server");
+			try {
+				const cloudflareDocsClient = await experimental_createMCPClient({
+					name: "cloudflare-docs",
+					transport: {
+						type: "sse",
+						url: "https://docs.mcp.cloudflare.com/sse",
+					},
+				});
+				clients["cloudflare-docs"] = cloudflareDocsClient;
+				log.info("cloudflare-docs mcp server initialized successfully");
+			} catch (error) {
+				log.warn("failed to initialize cloudflare-docs mcp server", { error });
+				// Don't publish error to session as this is a built-in feature
+				// and shouldn't interrupt the user experience
+			}
 
-      return {
-        clients,
-      }
-    },
-    async (state) => {
-      for (const client of Object.values(state.clients)) {
-        client.close()
-      }
-    },
-  )
+			// Process user-configured MCP servers
+			for (const [key, mcp] of Object.entries(cfg.mcp ?? {})) {
+				if (mcp.enabled === false) {
+					log.info("mcp server disabled", { key });
+					continue;
+				}
+				log.info("found", { key, type: mcp.type });
+				if (mcp.type === "remote") {
+					const client = await experimental_createMCPClient({
+						name: key,
+						transport: {
+							type: "sse",
+							url: mcp.url,
+						},
+					}).catch(() => {});
+					if (!client) {
+						Bus.publish(Session.Event.Error, {
+							error: {
+								name: "UnknownError",
+								data: {
+									message: `MCP server ${key} failed to start`,
+								},
+							},
+						});
+						continue;
+					}
+					clients[key] = client;
+				}
 
-  export async function clients() {
-    return state().then((state) => state.clients)
-  }
+				if (mcp.type === "local") {
+					const [cmd, ...args] = mcp.command;
+					const client = await experimental_createMCPClient({
+						name: key,
+						transport: new Experimental_StdioMCPTransport({
+							stderr: "ignore",
+							command: cmd,
+							args,
+							env: {
+								...process.env,
+								...(cmd === "opencode" ? { BUN_BE_BUN: "1" } : {}),
+								...mcp.environment,
+							},
+						}),
+					}).catch(() => {});
+					if (!client) {
+						Bus.publish(Session.Event.Error, {
+							error: {
+								name: "UnknownError",
+								data: {
+									message: `MCP server ${key} failed to start`,
+								},
+							},
+						});
+						continue;
+					}
+					clients[key] = client;
+				}
+			}
 
-  export async function tools() {
-    const result: Record<string, Tool> = {}
-    for (const [clientName, client] of Object.entries(await clients())) {
-      for (const [toolName, tool] of Object.entries(await client.tools())) {
-        result[clientName + "_" + toolName] = tool
-      }
-    }
-    return result
-  }
+			return {
+				clients,
+			};
+		},
+		async (state) => {
+			for (const client of Object.values(state.clients)) {
+				client.close();
+			}
+		}
+	);
+
+	export async function clients() {
+		return state().then((state) => state.clients);
+	}
+
+	export async function tools() {
+		const result: Record<string, Tool> = {};
+		for (const [clientName, client] of Object.entries(await clients())) {
+			for (const [toolName, tool] of Object.entries(await client.tools())) {
+				result[clientName + "_" + toolName] = tool;
+			}
+		}
+		return result;
+	}
 }
