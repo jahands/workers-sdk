@@ -1,6 +1,6 @@
 {
 	"name": "@jahands/wrangler",
-	"version": "4.23.2",
+	"version": "4.23.3",
 	"description": "Command-line interface for all things Cloudflare Workers",
 	"keywords": [
 		"wrangler",
@@ -68,7 +68,7 @@
 	"dependencies": {
 		"@cloudflare/kv-asset-handler": "workspace:*",
 		"@cloudflare/unenv-preset": "2.3.3",
-		"@jahands/opencode-cf": "^0.0.6",
+		"@jahands/opencode-cf": "^0.0.7",
 		"blake3-wasm": "2.1.5",
 		"esbuild": "catalog:default",
 		"miniflare": "workspace:*",

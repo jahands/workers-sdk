@@ -159,19 +159,7 @@ publish-all: build-opencode build-wrangler
     just publish-wrangler
     @echo "✅ All packages published successfully!"
 
-# Publish with version bump (patch)
-publish-patch:
-    @echo "📦 Publishing with patch version bump..."
-    cd packages/opencode/opencode && pnpm version patch && pnpm publish
-    cd packages/wrangler && pnpm version patch && pnpm publish
-    @echo "✅ Published with patch version bump!"
 
-# Publish with version bump (minor)
-publish-minor:
-    @echo "📦 Publishing with minor version bump..."
-    cd packages/opencode/opencode && pnpm version minor && pnpm publish
-    cd packages/wrangler && pnpm version minor && pnpm publish
-    @echo "✅ Published with minor version bump!"
 
 # Smart publish with automatic version bumping and dependency updates
 smart-publish bump_type="patch":
