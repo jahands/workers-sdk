@@ -16,7 +16,7 @@ export const UpgradeCommand = {
 				alias: "m",
 				describe: "installation method to use",
 				type: "string",
-				choices: ["curl", "npm", "pnpm", "bun"],
+				choices: ["npm", "pnpm", "bun"],
 			});
 	},
 	handler: async (args: { target?: string; method?: string }) => {

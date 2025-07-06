@@ -1,4 +1,3 @@
-import path from "path";
 import { $ } from "bun";
 import { z } from "zod";
 import { Bus } from "../bus";
@@ -49,7 +48,6 @@ export namespace Installation {
 	}
 
 	export async function method() {
-		if (process.execPath.includes(path.join(".opencode", "bin"))) return "curl";
 		const exec = process.execPath.toLowerCase();
 
 		const checks = [
@@ -99,11 +97,6 @@ export namespace Installation {
 	export async function upgrade(method: Method, target: string) {
 		const cmd = (() => {
 			switch (method) {
-				case "curl":
-					return $`curl -fsSL https://opencode.ai/install | bash`.env({
-						...process.env,
-						VERSION: target,
-					});
 				case "npm":
 					return $`npm install -g @jahands/opencode-cf@${target}`;
 				case "pnpm":
