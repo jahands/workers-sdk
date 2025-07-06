@@ -29,11 +29,11 @@ build:
 
 # Build only OpenCode packages
 build-opencode:
-    pnpm turbo build --filter=opencode
+    pnpm turbo build --filter=@jahands/opencode-cf
 
 # Build only Wrangler
 build-wrangler:
-    pnpm turbo build --filter=wrangler
+    pnpm turbo build --filter=@jahands/wrangler
 
 # Build TUI binary only
 build-tui:
