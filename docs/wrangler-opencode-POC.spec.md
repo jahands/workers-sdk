@@ -26,10 +26,9 @@ packages/
 **Publishing Strategy**:
 
 - Develop OpenCode packages within workers-sdk monorepo
-- Use pkg.pr.new for rapid iteration and testing during POC
-- Publish both `@jahands/opencode-cf` and `@jahands/wrangler` packages via pkg.pr.new
+- Publish both `@jahands/opencode-cf` and `@jahands/wrangler` packages to npm
 - **POC Package Naming**: Rename wrangler to `@jahands/wrangler` for POC to avoid conflicts with official package
-- Switch to npm publishing after POC validation
+- Use standard npm publishing workflow for distribution
 
 ## Implementation Steps
 
@@ -207,19 +206,19 @@ Integrate OpenCode builds into the existing turbo pipeline:
 
 #### Step 3.5: Publishing Strategy
 
-**pkg.pr.new Integration**:
+**npm Publishing**:
 
-Adapt the opencode publishing workflow for pkg.pr.new:
+Use standard npm publishing workflow:
 
 - Publish all 6 packages (1 main + 5 platform-specific) in coordinated releases
-- Update GitHub Actions to handle multi-platform builds
-- Add Go toolchain setup to CI pipeline
+- Use existing prerelease workflow or manual publishing as needed
+- Leverage existing CI/CD infrastructure for multi-platform builds
 
 **Development Workflow**:
 
 - **Local Development**: Use `workspace:*` dependency in Wrangler
 - **Testing**: Switch between workspace and published packages using pnpm commands
-- **Publishing**: Coordinated release of all platform packages
+- **Publishing**: Coordinated release of all platform packages to npm
 
 **Reference Files to Copy/Adapt**:
 
@@ -280,63 +279,30 @@ For the POC, we will rename the wrangler package from `wrangler` to `@jahands/wr
 
 - **Avoid Conflicts**: Prevent conflicts with the official `wrangler` package on npm
 - **Enable Testing**: Allow users to install and test the POC version alongside the official version
-- **Simplify Publishing**: Use pkg.pr.new without affecting the official package namespace
+- **Simplify Publishing**: Use npm publishing without affecting the official package namespace
 - **Clear Identification**: Make it obvious that this is a POC/experimental version
 
 **Implementation**:
 
 - Update `packages/wrangler/package.json` to use `"name": "@jahands/wrangler"`
 - Maintain all existing functionality and CLI commands
-- Publish to pkg.pr.new as `@jahands/wrangler@pr-<number>`
-- Users can install with: `npm install @jahands/wrangler@pr-123`
+- Publish to npm as `@jahands/wrangler`
+- Users can install with: `npm install @jahands/wrangler`
 
-### pkg.pr.new GitHub Actions Setup
+### npm Publishing Setup
 
-**Workflow Configuration**:
+**Publishing Strategy**:
 
-Create `.github/workflows/pkg-pr-new.yml`:
-
-```yaml
-name: Publish with pkg.pr.new
-
-on:
-  push:
-    branches:
-      - opencode
-  pull_request:
-    types: [opened, synchronize, reopened]
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --child-concurrency=10
-
-      - name: Build (MacOS only)
-        run: pnpm turbo build -F './packages/opencode/*' -F 'wrangler'
-
-      - name: Publish to pkg.pr.new
-        run: npx pkg-pr-new publish './packages/opencode/opencode' './packages/wrangler'
-        # Note: Wrangler will be published as @jahands/wrangler for POC
-```
+- Use standard npm publishing for both `@jahands/opencode-cf` and `@jahands/wrangler` packages
+- Leverage existing prerelease workflow in `.github/workflows/prerelease.yml`
+- Publish packages manually or via CI/CD as needed
 
 **Key Benefits**:
 
-- Automatic preview releases on every PR
-- Easy testing of integrated changes
-- No manual npm publishing during development
-- Simplified dependency management for testing
+- Standard npm distribution and installation
+- No dependency on external preview services
+- Direct control over package versions and releases
+- Familiar npm ecosystem integration
 
 ### Development Workflow
 
@@ -357,13 +323,13 @@ pnpm build    # Builds OpenCode packages locally (macOS only)
 wrangler -p   # Uses local OpenCode build (or @jahands/wrangler -p for POC)
 ```
 
-**Published Package Testing** (using pkg.pr.new):
+**Published Package Testing** (using npm):
 
 ```bash
-# Install from pkg.pr.new preview release
-pnpm add @jahands/opencode-cf@pr-123 --workspace=false
-pnpm add @jahands/wrangler@pr-123 --workspace=false
-wrangler -p   # Uses preview packages
+# Install from npm
+pnpm add @jahands/opencode-cf --workspace=false
+pnpm add @jahands/wrangler --workspace=false
+wrangler -p   # Uses published packages
 
 # Switch back to workspace version
 pnpm install  # Restores workspace links
@@ -384,7 +350,7 @@ pnpm install  # Restores workspace links
 - [x] OpenCode detects Wrangler configuration files (all variants)
 - [x] OpenCode understands Workers project context (bindings, runtime version)
 - [x] OpenCode dependency installs successfully on macOS
-- [x] pkg.pr.new publishing workflow functions correctly
+- [x] npm publishing workflow functions correctly
 
 ### User Experience Requirements
 
@@ -398,7 +364,7 @@ pnpm install  # Restores workspace links
 ### Technical Risks
 
 1. **Dependency Conflicts**: Manage OpenCode dependencies separately from workers-sdk catalog
-2. **Publishing Complexity**: Use pkg.pr.new for simplified preview publishing
+2. **Publishing Complexity**: Use standard npm publishing workflow
 3. **Performance Impact**: Lazy load OpenCode components and optimize process spawning
 4. **Platform Compatibility**: Focus on macOS compatibility for POC
 
@@ -432,7 +398,7 @@ The POC is considered successful when:
 2. Demo can be shown to stakeholders
 3. User feedback is positive (>4.0/5.0 satisfaction)
 4. Technical feasibility is proven
-5. pkg.pr.new publishing workflow is validated
+5. npm publishing workflow is validated
 6. Integration feels native to Wrangler CLI
 
 This POC will serve as the foundation for production implementation and provide valuable insights for the full integration roadmap.
@@ -483,7 +449,7 @@ The implementation has been updated to meet the new requirements where both `wra
 
 #### Publishing Infrastructure
 
-- **pkg.pr.new Integration**: Leveraged existing prerelease workflow for automatic publishing
+- **npm Publishing**: Leveraged existing prerelease workflow for automatic publishing
 - **Prerelease Configuration**: Added prerelease flags to OpenCode package.json
 - **GitHub Actions**: Enhanced prerelease workflow with Go setup for TUI builds
 - **Branch Triggers**: Added opencode branch to prerelease workflow triggers
@@ -505,4 +471,4 @@ The implementation has been updated to meet the new requirements where both `wra
 
 ## Status
 
-✅ **Phase 3 Complete** - Multi-platform build system integrated, pkg.pr.new publishing configured, all build and integration tests passing. Ready for Phase 4 (Workers Context Integration).
+✅ **Phase 3 Complete** - Multi-platform build system integrated, npm publishing configured, all build and integration tests passing. Ready for Phase 4 (Workers Context Integration).
