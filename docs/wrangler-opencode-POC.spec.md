@@ -50,11 +50,13 @@ packages/
    ```
 
 3. **Copy additional required files**:
+
    ```bash
-   # Copy root-level configuration files needed by OpenCode
-   cp /path/to/opencode/bunfig.toml packages/opencode/
+   # Copy base TypeScript configuration
    cp /path/to/opencode/tsconfig.json packages/opencode/tsconfig.base.json
    ```
+
+   **Note**: Skip `bunfig.toml` as we use pnpm for dependency management instead of Bun.
 
 #### Step 1.2: Update Workspace Configuration
 
@@ -70,10 +72,11 @@ packages/
      - "tools"
    ```
 
-2. **Preserve existing OpenCode dependency versions**:
+2. **Use pnpm for dependency management**:
    - Keep OpenCode packages' existing package.json files unchanged
+   - Use pnpm instead of Bun for consistent tooling across the monorepo
    - Avoid integrating with workers-sdk catalog system for POC
-   - Let OpenCode packages maintain their own dependency versions
+   - Let pnpm resolve and manage all OpenCode dependencies via standard package.json files
 
 #### Step 1.3: Setup Publishing and Dependency
 
