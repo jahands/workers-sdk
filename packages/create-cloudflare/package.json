@@ -85,10 +85,10 @@
 		"vite-tsconfig-paths": "^4.0.8",
 		"vitest": "catalog:default",
 		"which-pm-runs": "^1.1.0",
-		"wrangler": "workspace:*",
 		"wrap-ansi": "^9.0.0",
 		"xdg-app-paths": "^8.3.0",
-		"yargs": "^17.7.2"
+		"yargs": "^17.7.2",
+		"@jahands/wrangler": "workspace:*"
 	},
 	"engines": {
 		"node": ">=18.14.1"

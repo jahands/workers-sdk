@@ -14,7 +14,7 @@
 		"@types/is-even": "^1.0.2",
 		"is-even": "^1.0.0",
 		"miniflare": "workspace:*",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

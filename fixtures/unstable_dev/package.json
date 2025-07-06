@@ -9,7 +9,7 @@
 		"test:ci": "npm run dev"
 	},
 	"devDependencies": {
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

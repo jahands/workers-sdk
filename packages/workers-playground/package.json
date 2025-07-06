@@ -54,7 +54,7 @@
 		"tsx": "^3.12.8",
 		"undici": "catalog:default",
 		"vite": "catalog:default",
-		"wrangler": "workspace:^"
+		"@jahands/wrangler": "workspace:^"
 	},
 	"volta": {
 		"extends": "../../package.json"

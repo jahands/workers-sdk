@@ -1,8 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
-	"name": "opencode",
+	"name": "@jahands/opencode-cf",
 	"version": "0.0.5",
-	"private": true,
 	"type": "module",
 	"exports": {
 		"./*": "./src/*.ts"

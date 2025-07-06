@@ -24,7 +24,7 @@
 		"@cloudflare/workers-tsconfig": "workspace:*",
 		"concurrently": "^8.2.2",
 		"tsx": "^3.12.8",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"engines": {
 		"node": ">=18.15"

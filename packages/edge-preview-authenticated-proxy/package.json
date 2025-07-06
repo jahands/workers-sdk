@@ -17,7 +17,7 @@
 		"cookie": "^0.7.2",
 		"promjs": "^0.4.2",
 		"toucan-js": "^3.3.1",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

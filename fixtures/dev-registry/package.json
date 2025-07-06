@@ -16,6 +16,6 @@
 		"typescript": "catalog:default",
 		"vite": "catalog:vite-plugin",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	}
 }

@@ -15,7 +15,7 @@
 		"@cloudflare/workers-tsconfig": "workspace:^",
 		"undici": "catalog:default",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

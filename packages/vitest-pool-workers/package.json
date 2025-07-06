@@ -58,8 +58,8 @@
 		"devalue": "^4.3.0",
 		"miniflare": "workspace:*",
 		"semver": "^7.7.1",
-		"wrangler": "workspace:*",
-		"zod": "^3.22.3"
+		"zod": "^3.22.3",
+		"@jahands/wrangler": "workspace:*"
 	},
 	"devDependencies": {
 		"@cloudflare/eslint-config-worker": "workspace:*",

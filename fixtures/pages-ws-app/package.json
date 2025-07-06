@@ -17,8 +17,8 @@
 		"miniflare": "workspace:*",
 		"typescript": "catalog:default",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*",
-		"ws": "^8.18.0"
+		"ws": "^8.18.0",
+		"@jahands/wrangler": "workspace:*"
 	},
 	"engines": {
 		"node": ">=14"

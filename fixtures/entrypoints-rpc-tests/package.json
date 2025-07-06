@@ -10,7 +10,7 @@
 		"ts-dedent": "^2.2.0",
 		"undici": "catalog:default",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

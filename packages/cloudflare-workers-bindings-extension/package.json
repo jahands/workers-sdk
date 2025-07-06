@@ -127,7 +127,7 @@
 		"mocha": "^10.2.0",
 		"typescript": "^5.4.5",
 		"vsce": "^2.15.0",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"engines": {
 		"vscode": "^1.92.0"

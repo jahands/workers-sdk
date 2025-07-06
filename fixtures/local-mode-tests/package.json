@@ -19,7 +19,7 @@
 		"buffer": "^6.0.3",
 		"typescript": "catalog:default",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

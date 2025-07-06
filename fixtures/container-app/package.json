@@ -13,7 +13,7 @@
 		"@cloudflare/workers-types": "^4.20250617.0",
 		"ts-dedent": "^2.2.0",
 		"typescript": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"node": "20.19.2",

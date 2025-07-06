@@ -15,7 +15,7 @@
 		"get-port": "^7.1.0",
 		"is-even": "^1.0.0",
 		"miniflare": "workspace:*",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

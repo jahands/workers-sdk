@@ -10,7 +10,7 @@
 	"devDependencies": {
 		"@octokit/types": "^13.8.0",
 		"@octokit/webhooks-types": "^7.6.1",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

@@ -53,6 +53,6 @@
 		"pg-cloudflare": "^1.2.7",
 		"typescript": "catalog:default",
 		"vite": "catalog:vite-plugin",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	}
 }

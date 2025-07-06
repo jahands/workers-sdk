@@ -12,8 +12,8 @@
 		"@cloudflare/vite-plugin": "workspace:*",
 		"@cloudflare/workers-tsconfig": "workspace:*",
 		"@cloudflare/workers-types": "^4.20250617.0",
+		"@jahands/wrangler": "workspace:*",
 		"typescript": "catalog:default",
-		"vite": "catalog:vite-plugin",
-		"wrangler": "workspace:*"
+		"vite": "catalog:vite-plugin"
 	}
 }

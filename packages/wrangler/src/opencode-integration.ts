@@ -250,7 +250,7 @@ function getOpenCodeCommand(): { command: string; args: string[] } {
 	// Try to find the installed package
 	try {
 		// For published packages, try to find the binary
-		const opencodePkg = require.resolve("opencode/package.json");
+		const opencodePkg = require.resolve("@jahands/opencode-cf/package.json");
 		const opencodeDir = resolve(opencodePkg, "..");
 		const binPath = join(opencodeDir, "bin", "opencode");
 
@@ -261,7 +261,7 @@ function getOpenCodeCommand(): { command: string; args: string[] } {
 		throw new Error("OpenCode binary not found in package");
 	} catch (error) {
 		throw new Error(
-			"OpenCode package not found. Please ensure opencode workspace package is available or @jahands/opencode-cf is installed."
+			"OpenCode package not found. Please ensure @jahands/opencode-cf workspace package is available or @jahands/opencode-cf is installed."
 		);
 	}
 }

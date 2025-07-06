@@ -10,7 +10,7 @@
 	"devDependencies": {
 		"get-port": "^7.0.0",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

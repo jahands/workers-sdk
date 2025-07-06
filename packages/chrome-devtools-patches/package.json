@@ -14,7 +14,7 @@
 		"testenv": "make testenv"
 	},
 	"devDependencies": {
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

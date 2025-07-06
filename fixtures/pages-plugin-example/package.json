@@ -15,7 +15,7 @@
 	},
 	"devDependencies": {
 		"is-odd": "^3.0.1",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

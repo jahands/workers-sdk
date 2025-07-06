@@ -12,10 +12,10 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-tsconfig": "workspace:*",
+		"@jahands/wrangler": "workspace:*",
 		"typescript": "catalog:default",
 		"undici": "catalog:default",
-		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"vitest": "catalog:default"
 	},
 	"engines": {
 		"node": ">=18.0.0"

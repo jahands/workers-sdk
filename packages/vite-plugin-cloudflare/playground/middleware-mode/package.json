@@ -13,6 +13,6 @@
 		"express": "^5.1.0",
 		"typescript": "catalog:default",
 		"vite": "catalog:vite-plugin",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	}
 }

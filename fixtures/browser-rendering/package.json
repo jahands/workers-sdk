@@ -15,7 +15,7 @@
 		"@types/node": "catalog:default",
 		"typescript": "catalog:default",
 		"vitest": "catalog:default",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	},
 	"volta": {
 		"extends": "../../package.json"

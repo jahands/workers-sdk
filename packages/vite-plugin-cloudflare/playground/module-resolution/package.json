@@ -25,6 +25,6 @@
 		"slash-create": "6.2.1",
 		"typescript": "catalog:default",
 		"vite": "catalog:vite-plugin",
-		"wrangler": "workspace:*"
+		"@jahands/wrangler": "workspace:*"
 	}
 }
