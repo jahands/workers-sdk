@@ -123,7 +123,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- Assistant automatically detects wrangler.jsonc/wrangler.json configuration
+- Assistant automatically detects all Wrangler configuration file variants (wrangler.jsonc, wrangler.json, wrangler.toml)
 - Assistant understands configured bindings (KV, D1, Queues, R2 storage, etc.)
 - Assistant knows Workers runtime version and compatibility date
 - Assistant can reference project file structure and code
