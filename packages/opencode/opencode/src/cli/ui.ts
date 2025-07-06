@@ -8,7 +8,7 @@ export namespace UI {
 		[`█▄█▄█ █▄▄▀ █▄▄█ █░░█ █░▀█ █░░ █▀▀ █▄▄▀`],
 		[`▀░▀░▀ ▀░▀▀ ▀░░▀ ▀░░▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀░▀▀`],
 		[``, ``],
-		[`Powered by OpenCode`, ``],
+		[`powered by opencode`, ``],
 	];
 
 	export const CancelledError = NamedError.create("UICancelledError", z.void());
@@ -51,19 +51,19 @@ export namespace UI {
 		const result = [];
 		for (const row of LOGO) {
 			if (pad) result.push(pad);
-			if (row[0] === "Powered by OpenCode") {
+			if (row[0] === "powered by opencode") {
 				// Make subtitle dimmer
-				result.push(Bun.color("gray", "ansi"));
+				result.push(Style.TEXT_DIM);
 				result.push(row[0]);
-				result.push("\x1b[0m");
+				result.push(Style.TEXT_NORMAL);
 			} else if (row[0] === "") {
 				// Empty line
 				result.push("");
 			} else {
 				// Main logo
-				result.push(Bun.color("gray", "ansi"));
+				result.push(Style.TEXT_DIM);
 				result.push(row[0]);
-				result.push("\x1b[0m");
+				result.push(Style.TEXT_NORMAL);
 			}
 			result.push(EOL);
 		}

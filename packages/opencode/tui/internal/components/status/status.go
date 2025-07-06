@@ -36,10 +36,10 @@ func (m statusComponent) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m statusComponent) logo() string {
 	t := theme.CurrentTheme()
-	base := styles.NewStyle().Foreground(t.TextMuted()).Background(t.BackgroundElement()).Render
+	base := styles.NewStyle().Foreground(t.TextMuted()).Background(t.Background()).Render
 	emphasis := styles.NewStyle().
 		Foreground(t.Text()).
-		Background(t.BackgroundElement()).
+		Background(t.Background()).
 		Bold(true).
 		Render
 
@@ -47,7 +47,7 @@ func (m statusComponent) logo() string {
 	subtitle := base("powered by opencode ")
 	version := base(m.app.Version)
 	return styles.NewStyle().
-		Background(t.BackgroundElement()).
+		Background(t.Background()).
 		Padding(0, 1).
 		Render(wrangler + subtitle + version)
 }

@@ -614,20 +614,30 @@ func (a appModel) home(width int) string {
 	t := theme.CurrentTheme()
 	baseStyle := styles.NewStyle().Background(t.Background())
 	base := baseStyle.Render
-	muted := styles.NewStyle().Foreground(t.TextMuted()).Render
+
 
 	wrangler := `
 █░█░█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █░░ █▀▀ █▀▀█
 █▄█▄█ █▄▄▀ █▄▄█ █░░█ █░▀█ █░░ █▀▀ █▄▄▀
 ▀░▀░▀ ▀░▀▀ ▀░░▀ ▀░░▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀░▀▀`
 
-	subtitle := muted("Powered by OpenCode")
+	wranglerRendered := base(wrangler)
+	wranglerWidth := lipgloss.Width(wranglerRendered)
 
-	logo := lipgloss.JoinVertical(
-		lipgloss.Center,
-		base(wrangler),
-		"",
-		subtitle,
+	subtitle := styles.NewStyle().
+		Foreground(t.TextMuted()).
+		Background(t.Background()).
+		Width(wranglerWidth).
+		Align(lipgloss.Center).
+		Render("powered by opencode")
+
+	logo := styles.NewStyle().Background(t.Background()).Render(
+		lipgloss.JoinVertical(
+			lipgloss.Center,
+			wranglerRendered,
+			"",
+			subtitle,
+		),
 	)
 	// cwd := app.Info.Path.Cwd
 	// config := app.Info.Path.Config
