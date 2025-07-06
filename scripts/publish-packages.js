@@ -119,12 +119,11 @@ function main() {
 
 	// 5. Publish OpenCode first (wrangler depends on it)
 	console.log(`📦 Publishing @jahands/opencode-cf@${opencodeVersion}...`);
-	const publishCmd = otpCode ? `pnpm publish --otp=${otpCode}` : "pnpm publish";
-	execCommand(publishCmd, { cwd: "packages/opencode/opencode" });
+	execCommand("pnpm publish", { cwd: "packages/opencode/opencode" });
 
 	// 6. Publish Wrangler
 	console.log(`📦 Publishing @jahands/wrangler@${wranglerVersion}...`);
-	execCommand(publishCmd, { cwd: "packages/wrangler" });
+	execCommand("pnpm publish", { cwd: "packages/wrangler" });
 
 	// 7. Commit changes
 	console.log(`📝 Committing version changes...`);
