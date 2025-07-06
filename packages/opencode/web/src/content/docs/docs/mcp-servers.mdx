@@ -12,6 +12,22 @@ Once added, MCP tools are automatically available to the LLM alongside built-in 
 
 ---
 
+## Built-in servers
+
+opencode includes built-in MCP servers that are automatically available without any configuration:
+
+### Cloudflare Documentation
+
+The **Cloudflare Docs** MCP server provides access to search Cloudflare's documentation directly from your conversations. This server is automatically initialized and includes tools for:
+
+- Searching Cloudflare Workers documentation
+- Finding information about R2, D1, KV, and other Cloudflare services
+- Getting help with Cloudflare APIs and configurations
+
+The AI can automatically search Cloudflare docs when discussing Workers, Pages, or other Cloudflare services without requiring explicit commands.
+
+---
+
 ## Configure
 
 You can define MCP servers in your opencode config under `mcp`.
@@ -22,17 +38,17 @@ Add a local MCP servers under `mcp.localmcp`.
 
 ```json title="opencode.json"
 {
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "localmcp": {
-      "type": "local",
-      "command": ["bun", "x", "my-mcp-command"],
-      "enabled": true,
-      "environment": {
-        "MY_ENV_VAR": "my_env_var_value"
-      }
-    }
-  }
+	"$schema": "https://opencode.ai/config.json",
+	"mcp": {
+		"localmcp": {
+			"type": "local",
+			"command": ["bun", "x", "my-mcp-command"],
+			"enabled": true,
+			"environment": {
+				"MY_ENV_VAR": "my_env_var_value"
+			}
+		}
+	}
 }
 ```
 
@@ -44,13 +60,13 @@ Add a remote MCP servers under `mcp.remotemcp`.
 
 ```json title="opencode.json"
 {
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "remotemcp": {
-      "type": "remote",
-      "url": "https://my-mcp-server.com",
-      "enabled": true
-    }
-  }
+	"$schema": "https://opencode.ai/config.json",
+	"mcp": {
+		"remotemcp": {
+			"type": "remote",
+			"url": "https://my-mcp-server.com",
+			"enabled": true
+		}
+	}
 }
 ```
