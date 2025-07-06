@@ -179,11 +179,8 @@ async function runInteractiveSession(
 		// Get OpenCode command and args
 		const { command, args } = getOpenCodeCommand();
 
-		// Build command arguments - add initial prompt if provided
+		// Build command arguments
 		const commandArgs = [...args, context.projectRoot];
-		if (initialPrompt) {
-			commandArgs.push("--initial-prompt", initialPrompt);
-		}
 
 		// Spawn OpenCode TUI process
 		const child = spawn(command, commandArgs, {
@@ -191,6 +188,8 @@ async function runInteractiveSession(
 			env: {
 				...process.env,
 				OPENCODE_CONTEXT_FILE: contextFile,
+				// Pass initial prompt via environment variable for TUI to pick up
+				...(initialPrompt && { OPENCODE_INITIAL_PROMPT: initialPrompt }),
 			},
 		});
 
