@@ -21,6 +21,7 @@ import {
 } from "./cert/cert";
 import { checkNamespace, checkStartupCommand } from "./check/commands";
 import { cloudchamber } from "./cloudchamber";
+import { codeCommand } from "./code";
 import { experimental_readRawConfig, loadDotEnv, readConfig } from "./config";
 import { containers } from "./containers";
 import { demandSingleValue } from "./core";
@@ -1432,6 +1433,14 @@ export function createCLIParser(argv: string[]) {
 		},
 	]);
 	registry.registerNamespace("build");
+
+	registry.define([
+		{
+			command: "wrangler code",
+			definition: codeCommand,
+		},
+	]);
+	registry.registerNamespace("code");
 
 	// This set to false to allow overwrite of default behaviour
 	wrangler.version(false);

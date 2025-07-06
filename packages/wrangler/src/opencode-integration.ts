@@ -4,7 +4,6 @@ import { mkdir, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { experimental_readRawConfig, readConfig } from "./config";
-import { resolveWranglerConfigPath } from "./config/config-helpers";
 import { logger } from "./logger";
 import type { Config, RawConfig } from "./config";
 
@@ -24,7 +23,7 @@ interface ProjectContext {
 		durable_objects: unknown[];
 		r2_buckets: unknown[];
 		d1_databases: unknown[];
-		queues: unknown[];
+		queues: unknown;
 		services: unknown[];
 		analytics_engine_datasets: unknown[];
 		ai?: unknown;
@@ -75,6 +74,49 @@ export async function launchOpenCode(args: OpenCodeArgs): Promise<void> {
 }
 
 /**
+ * Proxy command that forwards all arguments directly to OpenCode
+ * Supports all OpenCode subcommands and flags
+ */
+export async function proxyToOpenCode(args: string[]): Promise<void> {
+	try {
+		// Get opencode command and args
+		const { command, args: baseArgs } = getOpenCodeCommand();
+
+		// Build command arguments - forward all provided args
+		const commandArgs = [...baseArgs, ...args];
+
+		// Spawn opencode process with forwarded arguments
+		const child = spawn(command, commandArgs, {
+			stdio: "inherit",
+			env: process.env,
+		});
+
+		// Wait for process to complete and exit with same code
+		await new Promise<void>((_resolve, reject) => {
+			child.on("exit", (code) => {
+				process.exit(code || 0);
+			});
+
+			child.on("error", (error) => {
+				reject(new Error(`Failed to launch OpenCode: ${error.message}`));
+			});
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			logger.error(`OpenCode proxy error: ${error.message}`);
+		} else {
+			logger.error("OpenCode proxy failed with unknown error");
+		}
+
+		// Graceful degradation
+		logger.log(
+			"OpenCode is not available. Please ensure @jahands/opencode-cf is installed."
+		);
+		process.exit(1);
+	}
+}
+
+/**
  * Gather Wrangler configuration and project metadata
  */
 async function gatherProjectContext(): Promise<ProjectContext> {
@@ -97,7 +139,6 @@ async function gatherProjectContext(): Promise<ProjectContext> {
 
 	let wranglerConfig: Config | undefined;
 	let rawConfig: RawConfig | undefined;
-	let configPath: string | undefined;
 
 	try {
 		// First try to read raw config to get the original structure
@@ -106,7 +147,6 @@ async function gatherProjectContext(): Promise<ProjectContext> {
 			{ hideWarnings: true }
 		);
 		rawConfig = rawConfigResult.rawConfig;
-		configPath = rawConfigResult.configPath;
 
 		// Then read the normalized config
 		wranglerConfig = readConfig({}, { hideWarnings: true });
@@ -194,10 +234,10 @@ async function runInteractiveSession(
 		});
 
 		// Wait for process to complete
-		await new Promise<void>((resolve, reject) => {
+		await new Promise<void>((resolvePromise, reject) => {
 			child.on("exit", (code) => {
 				if (code === 0) {
-					resolve();
+					resolvePromise();
 				} else {
 					reject(new Error(`Wrangler AI exited with code ${code}`));
 				}
@@ -238,8 +278,8 @@ async function writeContextFile(context: ProjectContext): Promise<string> {
 function getOpenCodeCommand(): { command: string; args: string[] } {
 	// In workspace development, use the direct path to the opencode source
 	const workspaceOpenCodePath = resolve(
-		__dirname,
-		"../../opencode/opencode/src/index.ts"
+		process.cwd(),
+		"packages/opencode/opencode/src/index.ts"
 	);
 
 	if (existsSync(workspaceOpenCodePath)) {
