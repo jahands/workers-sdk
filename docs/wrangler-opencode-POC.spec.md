@@ -332,19 +332,19 @@ pnpm install  # Restores workspace links
 
 ### Functional Requirements
 
-- [ ] `wrangler -p` launches interactive OpenCode TUI
-- [ ] `wrangler -p "question"` launches interactive OpenCode TUI and automatically sends the question
-- [ ] OpenCode detects Wrangler configuration files (all variants)
-- [ ] OpenCode understands Workers project context (bindings, runtime version)
-- [ ] OpenCode dependency installs successfully on macOS
+- [x] `wrangler -p` launches interactive OpenCode TUI
+- [x] `wrangler -p "question"` launches interactive OpenCode TUI and automatically sends the question
+- [x] OpenCode detects Wrangler configuration files (all variants)
+- [x] OpenCode understands Workers project context (bindings, runtime version)
+- [x] OpenCode dependency installs successfully on macOS
 - [ ] pkg.pr.new publishing workflow functions correctly
 
 ### User Experience Requirements
 
-- [ ] Seamless integration with existing Wrangler workflow
-- [ ] Clear error messages when AI services unavailable
-- [ ] Consistent CLI interface patterns
-- [ ] Workers-specific guidance and suggestions
+- [x] Seamless integration with existing Wrangler workflow
+- [x] Clear error messages when AI services unavailable
+- [x] Consistent CLI interface patterns
+- [x] Workers-specific guidance and suggestions
 
 ## Risk Mitigation
 
@@ -389,3 +389,31 @@ The POC is considered successful when:
 6. Integration feels native to Wrangler CLI
 
 This POC will serve as the foundation for production implementation and provide valuable insights for the full integration roadmap.
+
+## Implementation Status
+
+### Completed Features (Updated Requirements)
+
+The implementation has been updated to meet the new requirements where both `wrangler -p` and `wrangler -p <prompt>` launch OpenCode interactively:
+
+#### Core Integration
+
+- **Interactive Mode**: `wrangler -p` launches OpenCode TUI successfully
+- **Interactive Mode with Initial Prompt**: `wrangler -p "question"` launches OpenCode TUI and automatically sends the question
+- **Context Detection**: Successfully detects and parses wrangler.jsonc, wrangler.json, and wrangler.toml files
+- **Binding Analysis**: Correctly identifies D1 databases, Durable Objects, KV namespaces, and other Workers bindings
+- **Environment Variable Communication**: Uses `OPENCODE_INITIAL_PROMPT` to pass initial prompts to the TUI
+
+#### Technical Implementation
+
+- **Unified Architecture**: Both modes use the same interactive TUI process, eliminating the previous single-prompt mode
+- **Dynamic Loading**: OpenCode integration is loaded only when needed, maintaining Wrangler performance
+- **Workspace Development**: Uses `workspace:*` dependency for seamless local development
+- **Error Handling**: Graceful degradation when OpenCode is unavailable
+
+#### Testing Results
+
+- ✅ Basic interactive mode works across different Workers projects
+- ✅ Initial prompt mode correctly passes and sends prompts automatically
+- ✅ Context detection works with various binding types (D1, Durable Objects, KV)
+- ✅ Integration maintains existing Wrangler CLI patterns and performance
