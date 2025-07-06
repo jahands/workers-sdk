@@ -28,6 +28,7 @@ packages/
 - Develop OpenCode packages within workers-sdk monorepo
 - Use pkg.pr.new for rapid iteration and testing during POC
 - Publish both `@jahands/opencode-cf` and `@jahands/wrangler` packages via pkg.pr.new
+- **POC Package Naming**: Rename wrangler to `@jahands/wrangler` for POC to avoid conflicts with official package
 - Switch to npm publishing after POC validation
 
 ## Implementation Steps
@@ -271,6 +272,24 @@ Adapt the opencode publishing workflow for pkg.pr.new:
 
 ## Build and Deployment
 
+### POC Package Naming Strategy
+
+**Wrangler Package Renaming**:
+
+For the POC, we will rename the wrangler package from `wrangler` to `@jahands/wrangler` to:
+
+- **Avoid Conflicts**: Prevent conflicts with the official `wrangler` package on npm
+- **Enable Testing**: Allow users to install and test the POC version alongside the official version
+- **Simplify Publishing**: Use pkg.pr.new without affecting the official package namespace
+- **Clear Identification**: Make it obvious that this is a POC/experimental version
+
+**Implementation**:
+
+- Update `packages/wrangler/package.json` to use `"name": "@jahands/wrangler"`
+- Maintain all existing functionality and CLI commands
+- Publish to pkg.pr.new as `@jahands/wrangler@pr-<number>`
+- Users can install with: `npm install @jahands/wrangler@pr-123`
+
 ### pkg.pr.new GitHub Actions Setup
 
 **Workflow Configuration**:
@@ -309,6 +328,7 @@ jobs:
 
       - name: Publish to pkg.pr.new
         run: npx pkg-pr-new publish './packages/opencode/opencode' './packages/wrangler'
+        # Note: Wrangler will be published as @jahands/wrangler for POC
 ```
 
 **Key Benefits**:
@@ -334,7 +354,7 @@ jobs:
 # Wrangler uses workspace version of OpenCode
 pnpm install  # Links workspace packages
 pnpm build    # Builds OpenCode packages locally (macOS only)
-wrangler -p   # Uses local OpenCode build
+wrangler -p   # Uses local OpenCode build (or @jahands/wrangler -p for POC)
 ```
 
 **Published Package Testing** (using pkg.pr.new):
