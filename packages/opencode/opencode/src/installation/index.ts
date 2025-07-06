@@ -69,10 +69,6 @@ export namespace Installation {
 				name: "bun" as const,
 				command: () => $`bun pm ls -g`.throws(false).text(),
 			},
-			{
-				name: "brew" as const,
-				command: () => $`brew list --formula opencode-ai`.throws(false).text(),
-			},
 		];
 
 		checks.sort((a, b) => {
@@ -114,10 +110,6 @@ export namespace Installation {
 					return $`pnpm install -g @jahands/opencode-cf@${target}`;
 				case "bun":
 					return $`bun install -g @jahands/opencode-cf@${target}`;
-				case "brew":
-					return $`brew install sst/tap/opencode`.env({
-						HOMEBREW_NO_AUTO_UPDATE: "1",
-					});
 				default:
 					throw new Error(`Unknown method: ${method}`);
 			}
