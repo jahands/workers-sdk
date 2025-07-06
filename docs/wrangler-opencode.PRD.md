@@ -102,7 +102,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 ### Core Functionality
 
-#### R1: AI Assistant Access
+#### REQ1: AI Assistant Access
 
 **Requirement:** Users must be able to launch an AI assistant from within Wrangler CLI
 
@@ -115,7 +115,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - `wrangler -p "question"` runs single prompt and returns answer
 - Assistant launches within 3 seconds on typical developer machines
 
-#### R2: Workers Context Awareness
+#### REQ2: Workers Context Awareness
 
 **Requirement:** AI assistant must understand the current Workers project context
 
@@ -124,11 +124,11 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 **Acceptance Criteria:**
 
 - Assistant automatically detects wrangler.jsonc/wrangler.json configuration
-- Assistant understands configured bindings (KV, D1, Queues, R2, etc.)
+- Assistant understands configured bindings (KV, D1, Queues, R2 storage, etc.)
 - Assistant knows Workers runtime version and compatibility date
 - Assistant can reference project file structure and code
 
-#### R3: Workers-Specific Knowledge
+#### REQ3: Workers-Specific Knowledge
 
 **Requirement:** AI assistant must provide Workers-specific guidance and suggestions
 
@@ -141,7 +141,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - Assistant can suggest appropriate Workers patterns for common use cases
 - Assistant provides accurate information about Workers pricing and limits
 
-#### R4: Code Generation and Modification
+#### REQ4: Code Generation and Modification
 
 **Requirement:** AI assistant must be able to generate and modify Workers code
 
@@ -154,7 +154,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - Assistant can update wrangler.jsonc configuration
 - Assistant can create appropriate binding configurations
 
-#### R5: Interactive Development Session
+#### REQ5: Interactive Development Session
 
 **Requirement:** Users must be able to have ongoing conversations with the AI assistant
 
@@ -261,7 +261,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 ### High-Impact Risks
 
-#### R1: Poor AI Response Quality
+#### RISK1: Poor AI Response Quality
 
 **Risk:** AI provides inaccurate or unhelpful Workers-specific guidance
 
@@ -274,7 +274,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - Feedback collection and continuous improvement process
 - Clear disclaimers about AI-generated content
 
-#### R2: Performance Degradation
+#### RISK2: Performance Degradation
 
 **Risk:** AI integration significantly slows down Wrangler CLI
 
@@ -287,7 +287,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - Fallback mechanisms when AI services are slow
 - Clear performance requirements and testing
 
-#### R3: Security and Privacy Concerns
+#### RISK3: Security and Privacy Concerns
 
 **Risk:** Sensitive project information sent to external AI providers
 
@@ -302,7 +302,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 ### Medium-Impact Risks
 
-#### R4: Dependency Management Complexity
+#### RISK4: Dependency Management Complexity
 
 **Risk:** OpenCode integration creates maintenance burden
 
@@ -315,7 +315,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 - Version compatibility management
 - Fallback to core Wrangler functionality
 
-#### R5: User Experience Confusion
+#### RISK5: User Experience Confusion
 
 **Risk:** New AI features confuse existing Wrangler users
 
