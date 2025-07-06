@@ -43,7 +43,7 @@ interface ProjectContext {
 }
 
 /**
- * Main entry point for OpenCode integration
+ * Main entry point for Wrangler AI integration
  * Always launches interactive mode, with optional initial prompt
  */
 export async function launchOpenCode(args: OpenCodeArgs): Promise<void> {
@@ -61,14 +61,14 @@ export async function launchOpenCode(args: OpenCodeArgs): Promise<void> {
 		await runInteractiveSession(context, initialPrompt);
 	} catch (error) {
 		if (error instanceof Error) {
-			logger.error(`OpenCode integration error: ${error.message}`);
+			logger.error(`Wrangler AI integration error: ${error.message}`);
 		} else {
-			logger.error("OpenCode integration failed with unknown error");
+			logger.error("Wrangler AI integration failed with unknown error");
 		}
 
 		// Graceful degradation - show help instead of crashing
 		logger.log(
-			"OpenCode AI assistant is not available. Use 'wrangler --help' for available commands."
+			"Wrangler AI assistant is not available. Use 'wrangler --help' for available commands."
 		);
 		process.exit(1);
 	}
@@ -157,7 +157,7 @@ async function gatherProjectContext(): Promise<ProjectContext> {
 }
 
 /**
- * Launch OpenCode in interactive TUI mode
+ * Launch Wrangler AI in interactive TUI mode (powered by opencode)
  * Optionally sends an initial prompt after launch
  */
 async function runInteractiveSession(
@@ -166,23 +166,23 @@ async function runInteractiveSession(
 ): Promise<void> {
 	if (initialPrompt) {
 		logger.log(
-			`Launching OpenCode AI assistant with prompt: "${initialPrompt}"`
+			`Launching Wrangler AI assistant with prompt: "${initialPrompt}"`
 		);
 	} else {
-		logger.log("Launching OpenCode AI assistant...");
+		logger.log("Launching Wrangler AI assistant...");
 	}
 
 	// Write context to temporary file
 	const contextFile = await writeContextFile(context);
 
 	try {
-		// Get OpenCode command and args
+		// Get opencode command and args
 		const { command, args } = getOpenCodeCommand();
 
 		// Build command arguments
 		const commandArgs = [...args, context.projectRoot];
 
-		// Spawn OpenCode TUI process
+		// Spawn opencode TUI process
 		const child = spawn(command, commandArgs, {
 			stdio: "inherit",
 			env: {
@@ -199,12 +199,12 @@ async function runInteractiveSession(
 				if (code === 0) {
 					resolve();
 				} else {
-					reject(new Error(`OpenCode exited with code ${code}`));
+					reject(new Error(`Wrangler AI exited with code ${code}`));
 				}
 			});
 
 			child.on("error", (error) => {
-				reject(new Error(`Failed to launch OpenCode: ${error.message}`));
+				reject(new Error(`Failed to launch Wrangler AI: ${error.message}`));
 			});
 		});
 	} finally {
@@ -219,7 +219,7 @@ async function runInteractiveSession(
 }
 
 /**
- * Write project context to a temporary file for OpenCode to read
+ * Write project context to a temporary file for opencode to read
  */
 async function writeContextFile(context: ProjectContext): Promise<string> {
 	const tempDir = tmpdir();
@@ -232,11 +232,11 @@ async function writeContextFile(context: ProjectContext): Promise<string> {
 }
 
 /**
- * Get the command and arguments to run OpenCode
+ * Get the command and arguments to run opencode
  * Handles both workspace development and published package scenarios
  */
 function getOpenCodeCommand(): { command: string; args: string[] } {
-	// In workspace development, use the direct path to the OpenCode source
+	// In workspace development, use the direct path to the opencode source
 	const workspaceOpenCodePath = resolve(
 		__dirname,
 		"../../opencode/opencode/src/index.ts"
@@ -287,10 +287,10 @@ function getOpenCodeCommand(): { command: string; args: string[] } {
 			return { command: binPath, args: [] };
 		}
 
-		throw new Error("OpenCode binary not found in package");
+		throw new Error("opencode binary not found in package");
 	} catch (error) {
 		throw new Error(
-			"OpenCode package not found. Please ensure @jahands/opencode-cf workspace package is available or @jahands/opencode-cf is installed."
+			"opencode package not found. Please ensure @jahands/opencode-cf workspace package is available or @jahands/opencode-cf is installed."
 		);
 	}
 }
