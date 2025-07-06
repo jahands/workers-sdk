@@ -33,7 +33,7 @@ Currently, developers must context-switch between their development environment 
 
 Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
-1. Has deep knowledge of Cloudflare Workers APIs and patterns
+1. Provides Workers-specific guidance through curated prompts and documentation lookup
 2. Understands the current project context (wrangler.jsonc, code structure)
 3. Can execute Workers-specific commands and operations
 4. Provides contextual help and code generation
@@ -130,17 +130,17 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 #### REQ3: Workers-Specific Knowledge
 
-**Requirement:** AI assistant must provide Workers-specific guidance and suggestions
+**Requirement:** AI assistant must provide Workers-specific guidance using curated prompts and documentation lookup
 
 **Priority:** P0 (Must Have)
 
 **Acceptance Criteria:**
 
-- Assistant understands Workers runtime APIs (Request/Response, fetch, etc.)
-- Assistant knows Workers platform limitations and best practices
+- Assistant can search and reference current Cloudflare Workers documentation and API references
+- Assistant provides Workers-specific guidance through curated system prompts
 - Assistant can suggest appropriate Workers patterns for common use cases
-- Assistant provides accurate information about Workers pricing and limits
-- Assistant has access to current Cloudflare Workers documentation and API references
+- Assistant provides information about Workers platform limitations and best practices
+- Assistant can look up current Workers pricing and feature information
 
 #### REQ4: Code Generation and Modification
 
