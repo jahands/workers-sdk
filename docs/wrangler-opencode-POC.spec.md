@@ -8,7 +8,7 @@ This document provides detailed technical implementation guidance for integratin
 
 ### Integration Strategy
 
-**Integration Strategy**: Develop OpenCode packages within workers-sdk monorepo, then publish as `@jahands/wrangler-opencode` and use as dependency in Wrangler.
+**Integration Strategy**: Develop OpenCode packages within workers-sdk monorepo, then publish as `@jahands/opencode-cf` and use as dependency in Wrangler.
 
 **Directory Structure**:
 
@@ -27,7 +27,7 @@ packages/
 
 - Develop OpenCode packages within workers-sdk monorepo
 - Use pkg.pr.new for rapid iteration and testing during POC
-- Publish both `@jahands/wrangler-opencode` and `@jahands/wrangler` packages via pkg.pr.new
+- Publish both `@jahands/opencode-cf` and `@jahands/wrangler` packages via pkg.pr.new
 - Switch to npm publishing after POC validation
 
 ## Implementation Steps
@@ -79,12 +79,12 @@ packages/
 
 1. **Prepare OpenCode for publishing**:
 
-   - Configure build process to create `@jahands/wrangler-opencode` package
+   - Configure build process to create `@jahands/opencode-cf` package
    - Include all necessary binaries and assets in published package
    - Ensure Go TUI binary is included in the npm distribution
 
 2. **Add OpenCode as Wrangler dependency**:
-   - Add `@jahands/wrangler-opencode` to Wrangler's package.json for production
+   - Add `@jahands/opencode-cf` to Wrangler's package.json for production
    - Use `workspace:*` reference for local development
    - Switch between workspace and npm versions as needed
 
@@ -124,7 +124,7 @@ packages/
 **Process Architecture**:
 
 - Single prompt mode: Spawn Node.js process for OpenCode from npm package
-- Interactive mode: Spawn Go binary distributed with `@jahands/wrangler-opencode`
+- Interactive mode: Spawn Go binary distributed with `@jahands/opencode-cf`
 - Context passing: Temporary files with JSON-serialized project data
 - Asset resolution: Use `require.resolve()` to locate OpenCode binaries in node_modules
 
@@ -134,7 +134,7 @@ packages/
 
 **Publishing Configuration**:
 
-- Create build process for `@jahands/wrangler-opencode` package
+- Create build process for `@jahands/opencode-cf` package
 - Include OpenCode packages in monorepo build dependency graph
 - Ensure proper build ordering (OpenCode before publishing)
 - Handle mixed language builds (TypeScript + Go)
@@ -150,7 +150,7 @@ packages/
 
 **Dependency Resolution**:
 
-- Wrangler imports OpenCode from `@jahands/wrangler-opencode` npm package
+- Wrangler imports OpenCode from `@jahands/opencode-cf` npm package
 - Use `require.resolve()` to locate OpenCode binaries in node_modules
 - Integration module spawns processes from published package
 - No direct workspace references in Wrangler code
@@ -169,7 +169,7 @@ For development, use `workspace:*` in package.json:
 ```json
 {
 	"dependencies": {
-		"@jahands/wrangler-opencode": "workspace:*"
+		"@jahands/opencode-cf": "workspace:*"
 	}
 }
 ```
@@ -179,7 +179,7 @@ For production releases, change to pinned version:
 ```json
 {
 	"dependencies": {
-		"@jahands/wrangler-opencode": "^0.1.0"
+		"@jahands/opencode-cf": "^0.1.0"
 	}
 }
 ```
@@ -191,7 +191,7 @@ For production releases, change to pinned version:
 pnpm install
 
 # Test published package - temporarily overrides workspace
-pnpm add @jahands/wrangler-opencode@latest --workspace=false
+pnpm add @jahands/opencode-cf@latest --workspace=false
 
 # Back to workspace version - restores workspace links
 pnpm install
@@ -311,7 +311,7 @@ wrangler -p   # Uses local OpenCode build
 
 ```bash
 # Install from pkg.pr.new preview release
-pnpm add @jahands/wrangler-opencode@pr-123 --workspace=false
+pnpm add @jahands/opencode-cf@pr-123 --workspace=false
 pnpm add @jahands/wrangler@pr-123 --workspace=false
 wrangler -p   # Uses preview packages
 
