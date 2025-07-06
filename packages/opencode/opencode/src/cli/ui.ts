@@ -8,7 +8,7 @@ export namespace UI {
 		[`█▄█▄█ █▄▄▀ █▄▄█ █░░█ █░▀█ █░░ █▀▀ █▄▄▀   █▄▄█ ░█░`],
 		[`▀░▀░▀ ▀░▀▀ ▀░░▀ ▀░░▀ ▀▀▀▀ ▀▀▀ ▀▀▀ ▀░▀▀   ▀░░▀ ▀▀▀`],
 		[``, ``],
-		[`powered by opencode`, ``],
+		[`             powered by opencode`, ``],
 	];
 
 	export const CancelledError = NamedError.create("UICancelledError", z.void());
