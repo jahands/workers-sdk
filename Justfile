@@ -173,6 +173,23 @@ publish-minor:
     cd packages/wrangler && pnpm version minor && pnpm publish
     @echo "✅ Published with minor version bump!"
 
+# Smart publish with automatic version bumping and dependency updates
+smart-publish bump_type="patch":
+    @echo "🚀 Smart publishing with {{bump_type}} version bump..."
+    node scripts/publish-packages.js {{bump_type}}
+
+# Quick publish (patch version bump)
+publish:
+    just smart-publish patch
+
+# Publish with minor version bump
+publish-minor:
+    just smart-publish minor
+
+# Publish with major version bump
+publish-major:
+    just smart-publish major
+
 # Dry run publish (check what would be published)
 publish-dry-run:
     @echo "🔍 Dry run publish check..."
@@ -202,11 +219,14 @@ help:
     @echo "  just use-workspace     # Use local packages"
     @echo "  just use-published 123 # Use packages from PR #123"
     @echo ""
-    @echo "Publishing:"
+    @echo "Publishing (recommended):"
+    @echo "  just publish           # Smart publish with patch bump (easiest!)"
+    @echo "  just publish-minor     # Smart publish with minor bump"
+    @echo "  just publish-major     # Smart publish with major bump"
     @echo "  just publish-dry-run   # Check what would be published"
-    @echo "  just publish-all       # Publish both packages"
-    @echo "  just publish-patch     # Publish with patch version bump"
-    @echo "  just publish-minor     # Publish with minor version bump"
+    @echo ""
+    @echo "Publishing (manual):"
+    @echo "  just publish-all       # Publish both packages (old method)"
     @echo ""
     @echo "Debugging:"
     @echo "  just status  # Check build status"
