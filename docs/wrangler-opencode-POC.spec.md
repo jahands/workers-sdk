@@ -26,8 +26,9 @@ packages/
 **Publishing Strategy**:
 
 - Develop OpenCode packages within workers-sdk monorepo
-- Publish combined package as `@jahands/wrangler-opencode` to npm
-- Wrangler uses published npm package as dependency
+- Use pkg.pr.new for rapid iteration and testing during POC
+- Publish both `@jahands/wrangler-opencode` and `@jahands/wrangler` packages via pkg.pr.new
+- Switch to npm publishing after POC validation
 
 ## Implementation Steps
 
@@ -124,7 +125,7 @@ packages/
 
 - Single prompt mode: Spawn Node.js process for OpenCode from npm package
 - Interactive mode: Spawn Go binary distributed with `@jahands/wrangler-opencode`
-- Context passing: Environment variables with JSON-serialized project data
+- Context passing: Temporary files with JSON-serialized project data
 - Asset resolution: Use `require.resolve()` to locate OpenCode binaries in node_modules
 
 ### Phase 3: Build System Integration (Week 3-4)
@@ -142,8 +143,8 @@ packages/
 
 - Add OpenCode packages to Turbo task dependencies
 - Create package-specific turbo.json files for custom build steps
-- Configure Go build tasks for TUI package
-- Setup publishing workflow for `@jahands/wrangler-opencode`
+- Configure Go build tasks for TUI package (macOS only for POC)
+- Setup pkg.pr.new GitHub Actions workflow for publishing
 
 #### Step 3.2: Wrangler Integration
 
@@ -234,11 +235,58 @@ pnpm install
 
 **Context Enhancement**:
 
-- Pass Workers project context to OpenCode via environment variables
+- Pass Workers project context to OpenCode via temporary files
 - Enable AI to understand current project's binding configuration
 - Provide Workers-specific code suggestions and best practices
 
 ## Build and Deployment
+
+### pkg.pr.new GitHub Actions Setup
+
+**Workflow Configuration**:
+
+Create `.github/workflows/pkg-pr-new.yml`:
+
+```yaml
+name: Publish with pkg.pr.new
+
+on:
+  push:
+    branches:
+      - opencode
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --child-concurrency=10
+
+      - name: Build (MacOS only)
+        run: pnpm turbo build -F './packages/opencode/*' -F 'wrangler'
+
+      - name: Publish to pkg.pr.new
+        run: npx pkg-pr-new publish './packages/opencode/opencode' './packages/wrangler'
+```
+
+**Key Benefits**:
+
+- Automatic preview releases on every PR
+- Easy testing of integrated changes
+- No manual npm publishing during development
+- Simplified dependency management for testing
 
 ### Development Workflow
 
@@ -255,16 +303,17 @@ pnpm install
 ```bash
 # Wrangler uses workspace version of OpenCode
 pnpm install  # Links workspace packages
-pnpm build    # Builds OpenCode packages locally
+pnpm build    # Builds OpenCode packages locally (macOS only)
 wrangler -p   # Uses local OpenCode build
 ```
 
-**Published Package Testing**:
+**Published Package Testing** (using pkg.pr.new):
 
 ```bash
-# Switch to published version (no package.json editing needed)
-pnpm add @jahands/wrangler-opencode@latest --workspace=false
-wrangler -p   # Uses published OpenCode package
+# Install from pkg.pr.new preview release
+pnpm add @jahands/wrangler-opencode@pr-123 --workspace=false
+pnpm add @jahands/wrangler@pr-123 --workspace=false
+wrangler -p   # Uses preview packages
 
 # Switch back to workspace version
 pnpm install  # Restores workspace links
@@ -283,7 +332,7 @@ pnpm install  # Restores workspace links
 1. **Unit Tests**: Integration module functions and context gathering
 2. **Integration Tests**: CLI argument parsing and process spawning
 3. **E2E Tests**: Full workflow with various Workers project configurations
-4. **Cross-Platform Tests**: Windows, macOS, Linux compatibility
+4. **Platform Tests**: macOS compatibility (POC scope)
 
 ## Success Criteria
 
@@ -293,8 +342,8 @@ pnpm install  # Restores workspace links
 - [ ] `wrangler -p "question"` runs single prompt and returns answer
 - [ ] OpenCode detects Wrangler configuration files (all variants)
 - [ ] OpenCode understands Workers project context (bindings, runtime version)
-- [ ] Performance impact < 500ms for non-AI commands
-- [ ] OpenCode dependency installs successfully across platforms
+- [ ] OpenCode dependency installs successfully on macOS
+- [ ] pkg.pr.new publishing workflow functions correctly
 
 ### User Experience Requirements
 
@@ -308,9 +357,9 @@ pnpm install  # Restores workspace links
 ### Technical Risks
 
 1. **Dependency Conflicts**: Manage OpenCode dependencies separately from workers-sdk catalog
-2. **Publishing Complexity**: Coordinate OpenCode package publishing with Wrangler updates
+2. **Publishing Complexity**: Use pkg.pr.new for simplified preview publishing
 3. **Performance Impact**: Lazy load OpenCode components and optimize process spawning
-4. **Cross-Platform Compatibility**: Test on Windows, macOS, Linux
+4. **Platform Compatibility**: Focus on macOS compatibility for POC
 
 ### User Experience Risks
 
@@ -342,7 +391,7 @@ The POC is considered successful when:
 2. Demo can be shown to stakeholders
 3. User feedback is positive (>4.0/5.0 satisfaction)
 4. Technical feasibility is proven
-5. Performance requirements are satisfied
+5. pkg.pr.new publishing workflow is validated
 6. Integration feels native to Wrangler CLI
 
 This POC will serve as the foundation for production implementation and provide valuable insights for the full integration roadmap.
