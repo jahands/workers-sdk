@@ -63,39 +63,21 @@ packages/
      - "tools"
    ```
 
-2. **Update root `package.json`** to include OpenCode dependencies in catalog:
-   ```json
-   {
-   	"dependencies": {
-   		// ... existing dependencies
-   		"@ai-sdk/anthropic": "1.2.12",
-   		"@clack/prompts": "0.11.0",
-   		"ai": "4.3.16",
-   		"hono": "4.7.10",
-   		"yargs": "18.0.0",
-   		"zod": "3.24.2"
-   	}
-   }
-   ```
+2. **Preserve existing OpenCode dependency versions** to avoid conflicts:
+   - Keep OpenCode packages' existing package.json files unchanged
+   - Avoid integrating with workers-sdk catalog system for POC
+   - Let OpenCode packages maintain their own dependency versions
 
 #### Step 1.3: Resolve Package Dependencies
 
-1. **Update OpenCode package.json files** to use workspace references:
+**Dependency Strategy for POC**:
 
-   ```json
-   // packages/opencode/opencode/package.json
-   {
-   	"dependencies": {
-   		"ai": "catalog:",
-   		"zod": "catalog:"
-   		// ... other dependencies
-   	}
-   }
-   ```
+- **Preserve OpenCode versions**: Keep existing package.json files as-is
+- **Avoid catalog integration**: Skip workers-sdk catalog system to prevent version conflicts
+- **Isolate dependencies**: Let OpenCode packages use their proven dependency versions
+- **Handle Go modules**: Keep existing go.mod structure unchanged
 
-2. **Handle Go module dependencies** for TUI package:
-   - Keep the existing `go.mod` structure
-   - Ensure Go toolchain is available in CI/CD
+**Rationale**: Minimizes integration complexity and reduces risk of dependency conflicts during POC development
 
 ### Phase 2: Wrangler CLI Integration (Week 2-3)
 
@@ -143,14 +125,16 @@ packages/
 **Dependency Management Strategy**:
 
 - Keep OpenCode packages as external dependencies for POC simplicity
-- Add workspace reference in Wrangler's package.json
+- Preserve OpenCode's existing dependency versions (no catalog integration)
 - Avoid bundling OpenCode to minimize build complexity
+- Let each OpenCode package manage its own node_modules
 
 **Key Changes**:
 
 - Update `EXTERNAL_DEPENDENCIES` to exclude OpenCode from bundling
 - Add workspace dependency reference: `"opencode": "workspace:*"`
 - Ensure build process can locate OpenCode binaries at runtime
+- No changes to OpenCode package.json files (preserve existing versions)
 
 #### Step 3.2: Update Turbo Configuration
 
