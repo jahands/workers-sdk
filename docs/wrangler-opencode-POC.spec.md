@@ -83,9 +83,9 @@ packages/
    - Ensure Go TUI binary is included in the npm distribution
 
 2. **Add OpenCode as Wrangler dependency**:
-   - Add `@jahands/wrangler-opencode` to Wrangler's package.json
-   - Use published npm package (not workspace reference)
-   - Pin to specific version for POC stability
+   - Add `@jahands/wrangler-opencode` to Wrangler's package.json for production
+   - Use `workspace:*` reference for local development
+   - Switch between workspace and npm versions as needed
 
 ### Phase 2: Wrangler CLI Integration (Week 2-3)
 
@@ -156,10 +156,45 @@ packages/
 
 **Development Workflow**:
 
-- Develop OpenCode packages within workers-sdk monorepo
-- Publish changes to `@jahands/wrangler-opencode`
-- Update Wrangler's dependency version to test changes
-- Standard npm dependency management for production
+- **Local Development**: Use `workspace:*` dependency for immediate testing
+- **Integration Testing**: Use pnpm commands to temporarily test published version
+- **Production Releases**: Change to pinned npm version (e.g., `^0.1.0`)
+- **Daily Development**: Use pnpm commands to avoid manual package.json editing
+
+**Dependency Configuration**:
+
+For development, use `workspace:*` in package.json:
+
+```json
+{
+	"dependencies": {
+		"@jahands/wrangler-opencode": "workspace:*"
+	}
+}
+```
+
+For production releases, change to pinned version:
+
+```json
+{
+	"dependencies": {
+		"@jahands/wrangler-opencode": "^0.1.0"
+	}
+}
+```
+
+**Switching Between Versions**:
+
+```bash
+# Local development (default) - uses workspace packages
+pnpm install
+
+# Test published package - temporarily overrides workspace
+pnpm add @jahands/wrangler-opencode@latest --workspace=false
+
+# Back to workspace version - restores workspace links
+pnpm install
+```
 
 ### Phase 4: Workers Context Integration (Week 4-5)
 
@@ -212,6 +247,28 @@ packages/
 1. Install dependencies across all packages (`pnpm install`)
 2. Build OpenCode packages before Wrangler
 3. Verify binary paths and permissions for Go TUI executable
+
+**Development Modes**:
+
+**Local Development** (using workspace):
+
+```bash
+# Wrangler uses workspace version of OpenCode
+pnpm install  # Links workspace packages
+pnpm build    # Builds OpenCode packages locally
+wrangler -p   # Uses local OpenCode build
+```
+
+**Published Package Testing**:
+
+```bash
+# Switch to published version (no package.json editing needed)
+pnpm add @jahands/wrangler-opencode@latest --workspace=false
+wrangler -p   # Uses published OpenCode package
+
+# Switch back to workspace version
+pnpm install  # Restores workspace links
+```
 
 **Testing Commands**:
 
