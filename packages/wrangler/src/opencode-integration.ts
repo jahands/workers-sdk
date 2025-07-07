@@ -190,6 +190,7 @@ async function gatherProjectContext(): Promise<ProjectContext> {
 		projectRoot,
 		workersRuntime: wranglerConfig?.compatibility_date,
 		bindings,
+		// eslint-disable-next-line turbo/no-undeclared-env-vars
 		environment: process.env.WRANGLER_ENV,
 		accountId: wranglerConfig?.account_id,
 		workerName: wranglerConfig?.name,
@@ -277,8 +278,8 @@ async function writeContextFile(context: ProjectContext): Promise<string> {
  */
 function getOpenCodeCommand(): { command: string; args: string[] } {
 	// In workspace development, use the direct path to the opencode source
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-restricted-globals
 	const workspaceOpenCodePath = resolve(
+		// eslint-disable-next-line no-restricted-globals
 		__dirname,
 		"../../opencode/opencode/src/index.ts"
 	);
