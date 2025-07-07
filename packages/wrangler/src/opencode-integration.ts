@@ -5,6 +5,7 @@ import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { experimental_readRawConfig, readConfig } from "./config";
 import { logger } from "./logger";
+import { getBasePath } from "./paths";
 import type { Config, RawConfig } from "./config";
 
 interface OpenCodeArgs {
@@ -279,9 +280,8 @@ async function writeContextFile(context: ProjectContext): Promise<string> {
 function getOpenCodeCommand(): { command: string; args: string[] } {
 	// In workspace development, use the direct path to the opencode source
 	const workspaceOpenCodePath = resolve(
-		// eslint-disable-next-line no-restricted-globals
-		__dirname,
-		"../../opencode/opencode/src/index.ts"
+		getBasePath(),
+		"../opencode/opencode/src/index.ts"
 	);
 
 	if (existsSync(workspaceOpenCodePath)) {
