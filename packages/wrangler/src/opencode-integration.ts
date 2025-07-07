@@ -277,9 +277,10 @@ async function writeContextFile(context: ProjectContext): Promise<string> {
  */
 function getOpenCodeCommand(): { command: string; args: string[] } {
 	// In workspace development, use the direct path to the opencode source
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-restricted-globals
 	const workspaceOpenCodePath = resolve(
-		process.cwd(),
-		"packages/opencode/opencode/src/index.ts"
+		__dirname,
+		"../../opencode/opencode/src/index.ts"
 	);
 
 	if (existsSync(workspaceOpenCodePath)) {
