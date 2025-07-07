@@ -21,7 +21,6 @@ import {
 } from "./cert/cert";
 import { checkNamespace, checkStartupCommand } from "./check/commands";
 import { cloudchamber } from "./cloudchamber";
-import { codeCommand } from "./code";
 import { experimental_readRawConfig, loadDotEnv, readConfig } from "./config";
 import { containers } from "./containers";
 import { demandSingleValue } from "./core";
@@ -1434,14 +1433,6 @@ export function createCLIParser(argv: string[]) {
 	]);
 	registry.registerNamespace("build");
 
-	registry.define([
-		{
-			command: "wrangler code",
-			definition: codeCommand,
-		},
-	]);
-	registry.registerNamespace("code");
-
 	// This set to false to allow overwrite of default behaviour
 	wrangler.version(false);
 
@@ -1454,6 +1445,13 @@ export function createCLIParser(argv: string[]) {
 
 export async function main(argv: string[]): Promise<void> {
 	setupSentry();
+
+	// Special handling for 'code' command to bypass yargs strict mode
+	if (argv.length > 0 && argv[0] === "code") {
+		const { proxyToOpenCode } = await import("./opencode-integration");
+		await proxyToOpenCode(argv.slice(1)); // Pass all arguments after 'code'
+		return;
+	}
 
 	const startTime = Date.now();
 	const wrangler = createCLIParser(argv);
