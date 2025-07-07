@@ -43,13 +43,13 @@ func (m statusComponent) logo() string {
 		Bold(true).
 		Render
 
-	wrangler := emphasis("wrangler ")
-	subtitle := base("powered by opencode ")
-	version := base(m.app.Version)
-	return styles.NewStyle().
-		Background(t.Background()).
-		Padding(0, 1).
-		Render(wrangler + subtitle + version)
+		open := base("open")
+		code := emphasis("code ")
+		version := base(m.app.Version)
+		return styles.NewStyle().
+			Background(t.BackgroundElement()).
+			Padding(0, 1).
+			Render(open + code + version)
 }
 
 func formatTokensAndCost(tokens float64, contextWindow float64, cost float64) string {
