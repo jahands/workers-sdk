@@ -70,7 +70,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- `wrangler -p "how do I add a queue to my worker"` launches OpenCode interactively and automatically sends the prompt
+- `wrangler prompt "how do I add a queue to my worker"` launches OpenCode interactively and automatically sends the prompt
 - OpenCode has context about the current Workers project
 - OpenCode can suggest appropriate code changes and configurations
 
@@ -82,8 +82,8 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- `wrangler -p` or `wrangler --prompt` launches interactive OpenCode TUI
-- `wrangler -p <prompt>` launches interactive OpenCode TUI and automatically sends the prompt
+- `wrangler prompt` launches interactive OpenCode TUI
+- `wrangler prompt <prompt>` launches interactive OpenCode TUI and automatically sends the prompt
 - OpenCode can search Workers APIs, bindings, and configuration information
 - OpenCode can read and modify project files with Workers context
 
@@ -111,9 +111,8 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Acceptance Criteria:**
 
-- `wrangler -p` launches interactive AI assistant
-- `wrangler --prompt` launches interactive AI assistant
-- `wrangler -p "question"` launches interactive AI assistant and automatically sends the question
+- `wrangler prompt` launches interactive AI assistant
+- `wrangler prompt "question"` launches interactive AI assistant and automatically sends the question
 - Assistant launches within 3 seconds on typical developer machines
 
 #### REQ2: Workers Context Awareness
@@ -230,7 +229,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 #### Developer Adoption
 
 - **Target:** 15% of active Wrangler users try AI assistant within 3 months of launch
-- **Measurement:** Unique users executing `wrangler -p` commands per month
+- **Measurement:** Unique users executing `wrangler prompt` commands per month
 - **Success Threshold:** 10,000+ monthly active users by end of Q1
 
 #### User Engagement
@@ -249,7 +248,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 #### Feature Utilization
 
-- **Interactive vs Direct Mode Usage:** Track ratio of `wrangler -p` vs `wrangler -p "prompt"` usage
+- **Interactive vs Direct Mode Usage:** Track ratio of `wrangler prompt` vs `wrangler prompt "prompt"` usage
 - **Workers Context Accuracy:** Measure how often AI suggestions are relevant to current project
 - **Code Generation Success:** Track acceptance rate of AI-generated code and configurations
 
@@ -338,7 +337,7 @@ Integrate OpenCode directly into Wrangler CLI to provide an AI assistant that:
 
 **Key Deliverables:**
 
-- `wrangler -p` and `wrangler -p "prompt"` commands functional
+- `wrangler prompt` and `wrangler prompt "prompt"` commands functional
 - Workers project context detection (wrangler configuration, basic bindings)
 - Workers documentation search integrated
 - Performance requirements met (REQ1, REQ2, REQ3, UX1, UX2)
